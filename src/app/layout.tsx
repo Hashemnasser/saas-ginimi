@@ -1,5 +1,8 @@
+import Navbar from "@/components/Navbar";
 import type { Metadata } from "next";
+import { SessionProvider } from "next-auth/react";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,16 +22,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <SessionProvider>
+        <body className="antialiased bg-gray-50 text-gray-900">
+          <Toaster position="top-center" richColors />
+          <Navbar />
+          <main className="max-w-7xl mx-auto p-6">{children}</main>
+        </body>
+      </SessionProvider>
     </html>
   );
 }
