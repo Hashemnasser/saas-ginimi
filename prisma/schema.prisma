@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+  // output   = "./generated/client" // نكشة: إجبار بريسما على الكتابة هنا بعيداً عن node_modules
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id       String @id @default(cuid())
+  userId   String
+  type     String
+  provider String
+
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Plan {
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
+model User {
+  id                       String    @id @default(cuid())
+  name                     String?
+  email                    String?   @unique
+  role                     Role      @default(USER)
+  password                 String? // <--- أضف هذا السطر هنا
+  isActive                 Boolean   @default(true)
+  emailVerified            DateTime?
+  image                    String?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime? @updatedAt
+  stripeSubscriptionStatus Boolean   @default(false)
+  stripeCustomerId         String?   @unique // رقم العميل في سترايب
+  stripeSubscriptionId     String?   @unique // رقم الاشتراك الحالي
+  stripePriceId            String? // نوع الخطة (التي اخترتها أنت)
+  stripeCurrentPeriodEnd   DateTime?
+  stripeSubscriptionStart  DateTime?
+
+  apiKey          String?   @unique
+  apiKeyEnabled   Boolean   @default(false)
+  apiKeyCreatedAt DateTime?
+  plan            Plan      @default(BASIC) // الخطة الحالية للمستخدم
+
+  accounts Account[]
+  sessions Session[]
+webhookSubscriptions   WebhookSubscription[]
+  //==== =====ل===ا تنسَ إضافة هذا السطر داخل موديل User الأصلي:===========
+  projects Project[]
+
+  projectMembers ProjectMember[]
+}
+
+
+model WebhookSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  url       String   // الـ endpoint الذي سيستقبل الـ webhook
+  events    String[] // مثال: ["project.created", "project.updated", "project.archived"]
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, url]) // منع تكرار نفس الـ URL لنفس المستخدم
+}
+
+
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Project {
+  id             String          @id @default(cuid())
+  name           String
+  description    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  archived       Boolean         @default(false) // <-- الحقل الجديد
+  // ربط المشروع بالمستخدم
+  userId         String
+  projectMembers ProjectMember[]
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// دور العضو في المشروع
+enum ProjectMemberRole {
+  VIEWER // يمكنه فقط رؤية المشروع
+  EDITOR // يمكنه تعديل المشروع وحذفه (ولكن لا يمكنه مشاركته مع آخرين)
+  OWNER // صاحب المشروع (يتم تعيينه عند الإنشاء)
+}
+
+// نموذج ربط المستخدمين بالمشاريع
+model ProjectMember {
+  id        String            @id @default(cuid())
+  projectId String
+  userId    String
+  role      ProjectMemberRole @default(VIEWER)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId]) // لا يمكن تكرار نفس المستخدم لنفس المشروع
+}
