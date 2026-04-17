@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import ToasterProvider from "@/components/ToasterProvider";
+import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -36,6 +37,7 @@ export default function RootLayout({
             <main className="max-w-7xl mx-auto p-6">{children}</main>
           </SessionProvider>
         </ThemeProvider>
+        <Analytics /> {/* أضف هذا السطر قبل إغلاق body */}
       </body>
     </html>
   );
