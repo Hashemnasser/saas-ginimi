@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import Link from "next/link";
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
-  throw new Error("اختبار Sentry من صفحتي الرئيسية");
 }
 export default async function HomePage() {
   const session = await auth();
