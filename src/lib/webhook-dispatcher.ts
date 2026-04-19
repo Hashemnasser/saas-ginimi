@@ -2,7 +2,9 @@ import crypto from "crypto";
 import { db } from "./db";
 
 // سر التوقيع (يجب أن يكون في متغيرات البيئة)
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "default-secret-change-me";
+const WEBHOOK_SECRET =
+  process.env.STRIPE_WEBHOOK_SECRET || "default-secret-change-me";
+// const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "default-secret-change-me";
 
 /**
  * إرسال webhook إلى جميع المشتركين في حدث معين

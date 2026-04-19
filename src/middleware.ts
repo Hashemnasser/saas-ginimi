@@ -155,57 +155,65 @@
 // // export const config = {
 // //   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 // // };
-
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-// دالة لاستخراج التوكن من الكوكيز يدوياً
+// دالة استخراج التوكن: أضفنا فحصاً إضافياً لضمان التوافق مع Vercel Production
 function getSessionToken(request: NextRequest): string | undefined {
-  // نجرب جميع الأسماء المحتملة حسب البيئة
-  const token =
-    request.cookies.get("next-auth.session-token")?.value ||
-    request.cookies.get("__Secure-next-auth.session-token")?.value ||
-    request.cookies.get("Secure-next-auth.session-token")?.value; // <-- هذا هو الاسم الفعلي في متصفحك
-  return token;
+  return (
+    request.cookies.get("__Secure-next-auth.session-token")?.value || // الأولوية للإنتاج (Production)
+    request.cookies.get("next-auth.session-token")?.value || // للتطوير المحلي (Local)
+    request.cookies.get("authjs.session-token")?.value // في حال استخدام Auth.js v5
+  );
 }
 
 export async function middleware(request: NextRequest) {
   const token = getSessionToken(request);
   const isLoggedIn = !!token;
-  const { pathname } = request.nextUrl;
+  const url = request.nextUrl.clone(); // نسخة من الرابط لتسهيل التعديل
+  const { pathname } = url;
 
   const isAuthPage =
     pathname.startsWith("/login") || pathname.startsWith("/register");
   const isAdminRoute = pathname.startsWith("/admin");
   const isProcessingPage = pathname.startsWith("/checkout/processing");
 
-  // 1. الصفحة الرئيسية والملفات العامة
-  if (pathname === "/") return NextResponse.next();
+  // 1. السماح للصفحة الرئيسية والملفات العامة
+  if (
+    pathname === "/" ||
+    pathname.startsWith("/_next") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
 
-  // 2. صفحات الدخول والتسجيل
+  // 2. إذا كان المستخدم في صفحة Auth وهو مسجل دخول -> حوله للداشبورد
   if (isAuthPage) {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
     }
     return NextResponse.next();
   }
 
-  // 3. حماية بقية المسارات (يجب تسجيل الدخول)
+  // 3. إذا لم يكن مسجلاً ويحاول دخول أي صفحة محمية
   if (!isLoggedIn) {
-    return NextResponse.redirect(new URL("/", request.url));
+    // يفضل التحويل لصفحة login بدلاً من الرئيسية ليعرف المستخدم أنه يحتاج تسجيل دخول
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
 
-  // 4. صفحة الأدمن: نسمح بالمرور هنا، وسيتم التحقق من الدور داخل الصفحة نفسها
-  if (isAdminRoute) {
+  // 4. حماية صفحة معالجة الدفع: التحقق من session_id
+  if (isProcessingPage) {
+    if (!url.searchParams.has("session_id")) {
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
     return NextResponse.next();
   }
 
-  // 5. صفحة معالجة الدفع: التحقق من وجود session_id
-  if (isProcessingPage) {
-    const hasSessionId = request.nextUrl.searchParams.has("session_id");
-    if (!hasSessionId) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
+  // 5. صفحة الأدمن: المرور مسموح (التحقق يتم داخل الصفحة لتقليل حجم الميدلوير)
+  if (isAdminRoute) {
     return NextResponse.next();
   }
 
