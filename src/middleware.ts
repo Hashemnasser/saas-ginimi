@@ -161,9 +161,10 @@ import { NextResponse } from "next/server";
 // دالة استخراج التوكن: أضفنا فحصاً إضافياً لضمان التوافق مع Vercel Production
 function getSessionToken(request: NextRequest): string | undefined {
   return (
-    request.cookies.get("__Secure-next-auth.session-token")?.value || // الأولوية للإنتاج (Production)
-    request.cookies.get("next-auth.session-token")?.value || // للتطوير المحلي (Local)
-    request.cookies.get("authjs.session-token")?.value // في حال استخدام Auth.js v5
+    request.cookies.get("__Secure-authjs.session-token")?.value ||
+    request.cookies.get("__Secure-next-auth.session-token")?.value ||
+    request.cookies.get("authjs.session-token")?.value ||
+    request.cookies.get("next-auth.session-token")?.value
   );
 }
 
