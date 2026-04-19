@@ -3,6 +3,8 @@ import { db } from "./db";
 
 export const checkSubscription = async () => {
   const session = await auth();
+  console.log("⏳9911 ", session?.user.email);
+
   if (!session?.user?.email) {
     return { isActive: false, plan: "BASIC" };
   }
