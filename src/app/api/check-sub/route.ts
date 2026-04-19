@@ -3,8 +3,10 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   // استدعاء دالتك التي كتبتها أنت
-  const isPro = await checkSubscription();
-  console.log("⏳ 10", isPro);
+  console.log("⏳ 100");
 
-  return NextResponse.json({ isPro: isPro });
+  const { isActive } = await checkSubscription();
+  console.log("⏳ 10", isActive);
+
+  return NextResponse.json({ isPro: isActive });
 }
