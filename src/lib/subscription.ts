@@ -21,7 +21,7 @@ export const checkSubscription = async () => {
   const isActive =
     user.stripeSubscriptionStatus === true &&
     (user?.stripeCurrentPeriodEnd?.getTime() || 0) > Date.now();
-
+  console.log("⏳99 ", isActive);
   return {
     isActive,
     plan: user.plan,

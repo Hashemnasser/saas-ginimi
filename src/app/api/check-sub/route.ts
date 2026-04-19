@@ -6,5 +6,5 @@ export async function GET() {
   const isPro = await checkSubscription();
   console.log("⏳ 10", isPro);
 
-  return NextResponse.json({ isPro: !!isPro });
+  return NextResponse.json({ isPro: isPro });
 }
