@@ -25,9 +25,9 @@ export default function ProcessingContent() {
     const check = async () => {
       const res = await fetch("/api/check-sub");
       const { isPro } = await res.json();
-      console.log("⏳9 ", isPro.isActive);
+      console.log("⏳9 ", isPro);
 
-      if (isPro.isActive) {
+      if (isPro) {
         await update();
         router.push("/dashboard");
       } else {
