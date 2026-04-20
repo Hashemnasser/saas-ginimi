@@ -158,7 +158,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-// دالة استخراج التوكن: أضفنا فحصاً إضافياً لضمان التوافق مع Vercel Production
+// دالة استخراج التوكن
 function getSessionToken(request: NextRequest): string | undefined {
   return (
     request.cookies.get("__Secure-authjs.session-token")?.value ||
@@ -169,17 +169,24 @@ function getSessionToken(request: NextRequest): string | undefined {
 }
 
 export async function middleware(request: NextRequest) {
+  const url = request.nextUrl.clone();
+  const { pathname } = url;
+
+  // 1. استثناء الويب-هوك فوراً (أهم خطوة لحل مشكلة 303)
+  // هذا يضمن أن طلبات Stripe لن تخضع لأي فحص تسجيل دخول
+  if (pathname.startsWith("/api/webhooks")) {
+    return NextResponse.next();
+  }
+
   const token = getSessionToken(request);
   const isLoggedIn = !!token;
-  const url = request.nextUrl.clone(); // نسخة من الرابط لتسهيل التعديل
-  const { pathname } = url;
 
   const isAuthPage =
     pathname.startsWith("/login") || pathname.startsWith("/register");
   const isAdminRoute = pathname.startsWith("/admin");
   const isProcessingPage = pathname.startsWith("/checkout/processing");
 
-  // 1. السماح للصفحة الرئيسية والملفات العامة
+  // 2. السماح للصفحة الرئيسية والملفات العامة
   if (
     pathname === "/" ||
     pathname.startsWith("/_next") ||
@@ -188,7 +195,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. إذا كان المستخدم في صفحة Auth وهو مسجل دخول -> حوله للداشبورد
+  // 3. إذا كان المستخدم في صفحة Auth وهو مسجل دخول -> حوله للداشبورد
   if (isAuthPage) {
     if (isLoggedIn) {
       url.pathname = "/dashboard";
@@ -197,14 +204,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3. إذا لم يكن مسجلاً ويحاول دخول أي صفحة محمية
-  if (!isLoggedIn) {
-    // يفضل التحويل لصفحة login بدلاً من الرئيسية ليعرف المستخدم أنه يحتاج تسجيل دخول
+  // 4. إذا لم يكن مسجلاً ويحاول دخول أي صفحة محمية (استثناء الـ API هنا أيضاً)
+  if (!isLoggedIn && !pathname.startsWith("/api")) {
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // 4. حماية صفحة معالجة الدفع: التحقق من session_id
+  // 5. حماية صفحة معالجة الدفع
   if (isProcessingPage) {
     if (!url.searchParams.has("session_id")) {
       url.pathname = "/dashboard";
@@ -213,14 +219,19 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 5. صفحة الأدمن: المرور مسموح (التحقق يتم داخل الصفحة لتقليل حجم الميدلوير)
-  if (isAdminRoute) {
-    return NextResponse.next();
-  }
-
   return NextResponse.next();
 }
 
+// تعديل الـ matcher ليكون أكثر دقة
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    /*
+     * استثناء كل المسارات التي تبدأ بـ:
+     * - api (المسؤول عن الويب-هوك)
+     * - _next/static (الملفات الثابتة)
+     * - _next/image (تحسين الصور)
+     * - favicon.ico (أيقونة الموقع)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 };
