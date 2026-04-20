@@ -13,6 +13,7 @@ export default function ArchiveProjectButton({ id }: { id: string }) {
   useEffect(() => {
     if (isPending) {
       toastIdRef.current = toast.loading("Archiving project...");
+      router.refresh();
     } else {
       if (toastIdRef.current) {
         if (state?.success) {
