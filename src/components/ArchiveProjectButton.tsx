@@ -11,40 +11,35 @@ export default function ArchiveProjectButton({ id }: { id: string }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (isPending) {
-      toastIdRef.current = toast.loading("Archiving project...");
+    // نتحقق من وجود نتيجة (سواء نجاح أو فشل)
+    if (state?.success) {
+      toast.success(state.success);
       router.refresh();
-    } else {
-      if (toastIdRef.current) {
-        if (state?.success) {
-          toast.success(state.success, { id: toastIdRef.current });
-        } else if (state?.error) {
-          toast.error(state.error, { id: toastIdRef.current });
-        } else {
-          toast.dismiss(toastIdRef.current);
-        }
-        toastIdRef.current = null;
-        router.refresh();
-      }
+    } else if (state?.error) {
+      toast.error(state.error);
     }
-  }, [isPending, state]);
+  }, [state, router]); // نراقب الـ state فقط هنا
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (
+      !confirm(
+        "Archive this project? You can restore it later from the archive."
+      )
+    ) {
+      e.preventDefault();
+      return;
+    }
+    // نظهر رسالة التحميل فوراً عند الإرسال
+    toast.loading("Archiving project...", { id: "archive-toast" });
+  };
   return (
-    <form action={actionForm}>
+    <form action={actionForm} onSubmit={handleSubmit}>
       <input type="hidden" name="projectId" value={id} />
       <button
         type="submit"
         disabled={isPending}
         className="text-gray-400 dark:text-gray-100 hover:text-yellow-600 transition-colors p-2 disabled:opacity-50"
         title="Archive project"
-        onClick={(e) => {
-          if (
-            !confirm(
-              "Archive this project? You can restore it later from the archive."
-            )
-          )
-            e.preventDefault();
-        }}
       >
         {isPending ? "..." : "📦"}
       </button>
