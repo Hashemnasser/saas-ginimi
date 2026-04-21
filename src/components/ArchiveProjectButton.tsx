@@ -2,47 +2,62 @@
 
 import { archiveProject } from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useRef } from "react";
+import { useTransition } from "react";
 import { toast } from "sonner";
 
 export default function ArchiveProjectButton({ id }: { id: string }) {
-  const [state, actionForm, isPending] = useActionState(archiveProject, null);
-  const toastIdRef = useRef<string | number | null>(null);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  useEffect(() => {
-    // نتحقق من وجود نتيجة (سواء نجاح أو فشل)
-    if (state?.success) {
-      toast.success(state.success);
-      router.refresh();
-    } else if (state?.error) {
-      toast.error(state.error);
-    }
-  }, [state, router]); // نراقب الـ state فقط هنا
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleArchive = async () => {
+    // 1. طلب تأكيد من المستخدم
     if (
       !confirm(
         "Archive this project? You can restore it later from the archive."
       )
     ) {
-      e.preventDefault();
       return;
     }
-    // نظهر رسالة التحميل فوراً عند الإرسال
-    toast.loading("Archiving project...", { id: "archive-toast" });
+
+    // 2. إظهار رسالة التحميل وتخزين الـ ID الخاص بها لتحديثها لاحقاً
+    const toastId = toast.loading("Archiving project...");
+
+    // 3. بدء العملية باستخدام startTransition
+    startTransition(async () => {
+      try {
+        // تجهيز البيانات لإرسالها للأكشن
+        const formData = new FormData();
+        formData.append("projectId", id);
+
+        // استدعاء الأكشن مباشرة
+        // نمرر null كـ prevState لأننا لا نستخدم useActionState هنا
+        const result = await archiveProject(null, formData);
+
+        if (result?.success) {
+          // تحديث نفس الـ Toast برسالة النجاح
+          toast.success(result.success, { id: toastId });
+
+          // تحديث بيانات الصفحة
+          router.refresh();
+        } else if (result?.error) {
+          // تحديث نفس الـ Toast برسالة الخطأ
+          toast.error(result.error, { id: toastId });
+        }
+      } catch (error) {
+        // في حال حدوث خطأ تقني غير متوقع
+        toast.error("An unexpected error occurred", { id: toastId });
+      }
+    });
   };
+
   return (
-    <form action={actionForm} onSubmit={handleSubmit}>
-      <input type="hidden" name="projectId" value={id} />
-      <button
-        type="submit"
-        disabled={isPending}
-        className="text-gray-400 dark:text-gray-100 hover:text-yellow-600 transition-colors p-2 disabled:opacity-50"
-        title="Archive project"
-      >
-        {isPending ? "..." : "📦"}
-      </button>
-    </form>
+    <button
+      onClick={handleArchive}
+      disabled={isPending}
+      className="text-gray-400 dark:text-gray-100 hover:text-yellow-600 transition-colors p-2 disabled:opacity-50"
+      title="Archive project"
+    >
+      {isPending ? <span className="animate-pulse">...</span> : "📦"}
+    </button>
   );
 }
