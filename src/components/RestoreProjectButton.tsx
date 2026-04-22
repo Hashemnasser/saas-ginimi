@@ -1,44 +1,47 @@
 "use client";
 
-import { restoreProject } from "@/lib/actions"; // سننشئ هذه الدالة
+import { restoreProject } from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useRef } from "react";
+import { useTransition } from "react";
 import { toast } from "sonner";
 
 export default function RestoreProjectButton({ id }: { id: string }) {
-  const [state, actionForm, isPending] = useActionState(restoreProject, null);
-  const toastIdRef = useRef<string | number | null>(null);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  useEffect(() => {
-    if (isPending) {
-      toastIdRef.current = toast.loading("Restoring project...");
-    } else {
-      if (toastIdRef.current) {
-        if (state?.success) {
-          toast.success(state.success, { id: toastIdRef.current });
-        } else if (state?.error) {
-          toast.error(state.error, { id: toastIdRef.current });
+  const handleRestore = async () => {
+    if (!confirm("Are you sure you want to restore this?")) return;
+
+    // 1. نظهر الرسالة فوراً خارج الـ transition لاستجابة أسرع (UI Snappiness)
+    const toastId = toast.loading("Restoring...");
+
+    startTransition(async () => {
+      try {
+        const formData = new FormData();
+        formData.append("projectId", id);
+
+        const result = await restoreProject(null, formData);
+
+        if (result?.success) {
+          toast.success(result.success, { id: toastId });
+          router.refresh(); // التحديث بعد النجاح
         } else {
-          toast.dismiss(toastIdRef.current);
+          toast.error(result?.error || "Failed to Restore", { id: toastId });
         }
-        toastIdRef.current = null;
-        router.refresh();
+      } catch (error) {
+        toast.error("An unexpected error occurred", { id: toastId });
       }
-    }
-  }, [isPending, state]);
+    });
+  };
 
   return (
-    <form action={actionForm}>
-      <input type="hidden" name="projectId" value={id} />
-      <button
-        type="submit"
-        disabled={isPending}
-        className="text-green-600 hover:text-green-800 transition-colors p-2 disabled:opacity-50"
-        title="Restore project"
-      >
-        {isPending ? "..." : "↩️"}
-      </button>
-    </form>
+    <button
+      title="Restore project"
+      onClick={handleRestore}
+      disabled={isPending} // لا تنسى تعطيل الزر أثناء المسح لمنع الضغط المتكرر
+      className="text-green-600 hover:text-green-800 hover:scale-110 active:scale-95 transition-all p-2 disabled:opacity-50"
+    >
+      {isPending ? <span className="animate-pulse">...</span> : "↩️"}
+    </button>
   );
 }
