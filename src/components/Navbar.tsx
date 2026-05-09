@@ -1,8 +1,8 @@
 import { auth, signOut } from "@/auth";
 import { revalidatePath } from "next/cache";
-import dynamic from "next/dynamic";
 import Link from "next/link";
-const ThemeToggle = dynamic(import("./ThemeToggle"), { ssr: false });
+import ThemeToggle from "./ThemeToggle";
+// const ThemeToggle = dynamic(import("./ThemeToggle"), { ssr: false })ما اشتغل هذا الحل لان ممنوع تعمل  ssr: false  على السيرفر كومبوننت
 export default async function Navbar() {
   const session = await auth();
 
