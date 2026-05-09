@@ -57,15 +57,16 @@ export async function POST(req: Request) {
     }
 
     // إضافة العضو
-    await db.projectMember.create({
+    const newMember = await db.projectMember.create({
       data: {
         projectId,
         userId: invitedUser.id,
         role: role === "EDITOR" ? "EDITOR" : "VIEWER",
       },
+      include: { user: { select: { name: true, email: true } } },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, newMember });
   } catch (error) {
     console.error("Invite error:", error);
     return NextResponse.json(

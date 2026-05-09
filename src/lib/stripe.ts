@@ -56,7 +56,7 @@ async function getOrCreatePrice(
 }
 
 export type PlanConfig = {
-  name: string;
+  name: "BASIC" | "PRO" | "ENTERPRISE";
   description: string;
   price: number; // بالسنت
   interval: "month" | "year";
@@ -65,21 +65,21 @@ export type PlanConfig = {
 
 export const PLANS: PlanConfig[] = [
   {
-    name: "Basic",
+    name: "BASIC",
     description: "For individuals just getting started",
     price: 0,
     interval: "month",
     projectLimit: 5,
   },
   {
-    name: "Pro",
+    name: "PRO",
     description: "For professionals and small teams",
     price: 2000, // 20 دولار
     interval: "month",
-    projectLimit: "unlimited",
+    projectLimit: 100,
   },
   {
-    name: "Enterprise",
+    name: "ENTERPRISE",
     description: "For large organizations",
     price: 5000, // 50 دولار
     interval: "month",

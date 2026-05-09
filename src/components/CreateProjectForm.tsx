@@ -17,7 +17,7 @@ export default function CreateProjectForm({
   useEffect(() => {
     if (state?.success) {
       toast.success(state.success);
-      formRef.current?.reset();
+      formRef.current?.reset(); //يخاطب المتصفح فورا ويقول امسح الحقول دون تدخل الرياكت;
     }
     if (state?.error) {
       toast.error(state.error);

@@ -11,6 +11,14 @@ import { z } from "zod";
 import { checkSubscription } from "./subscription";
 import { dispatchWebhook } from "./webhook-dispatcher";
 
+export async function loginWithGoogle() {
+  await signIn("google", { redirectTo: "/dashboard" });
+}
+
+export async function loginWithGithub() {
+  await signIn("github", { redirectTo: "/dashboard" });
+}
+
 export async function generateApiKey(): Promise<{
   success?: string;
   error?: string;
@@ -172,68 +180,150 @@ export async function loginUser(formData: FormData) {
   }
 }
 
+// export async function createProject(
+//   prevState: any,
+//   formData: FormData
+// ): Promise<void | any> {
+//   const session = await auth();
+//   if (!session?.user?.id) return { error: "Unauthorized" };
+
+//   // نكشة الـ SaaS: التحقق من عدد المشاريع الحالية
+//   const projectCount = await db.project.count({
+//     where: { userId: session.user.id },
+//   });
+
+//   const { isActive, plan } = await checkSubscription();
+
+//   // تحديد الحد الأقصى حسب الخطة
+//   let MAX_PROJECTS = 5; // Basic مجاني
+//   if (plan === "PRO") MAX_PROJECTS = 100;
+//   if (plan === "ENTERPRISE") MAX_PROJECTS = Infinity; // أو عدد كبير
+
+//   if (projectCount >= MAX_PROJECTS) {
+//     return { error: `You have reached the limit of ${MAX_PROJECTS} projects.` };
+//   }
+
+//   const name = formData.get("name") as string;
+//   const description = formData.get("description") as string;
+//   if (!name || name.trim() === "") {
+//     return { error: "Project name is required" };
+//   }
+export type ActionResponse = {
+  success?: string;
+  error?: string;
+};
 export async function createProject(
-  prevState: any,
+  prev: ActionResponse | null,
   formData: FormData
-): Promise<void | any> {
+): Promise<ActionResponse> {
   const session = await auth();
-  if (!session?.user?.id) return { error: "Unauthorized" };
 
-  // نكشة الـ SaaS: التحقق من عدد المشاريع الحالية
-  const projectCount = await db.project.count({
-    where: { userId: session.user.id },
-  });
+  // 1. التحقق من الهوية
+  if (!session || !session.user) return { error: "Unauthorized" };
 
-  const { isActive, plan } = await checkSubscription();
-
-  // تحديد الحد الأقصى حسب الخطة
-  let MAX_PROJECTS = 5; // Basic مجاني
-  if (plan === "PRO") MAX_PROJECTS = 100;
-  if (plan === "ENTERPRISE") MAX_PROJECTS = Infinity; // أو عدد كبير
-
-  if (projectCount >= MAX_PROJECTS) {
-    return { error: `You have reached the limit of ${MAX_PROJECTS} projects.` };
-  }
-
-  const name = formData.get("name") as string;
-  const description = formData.get("description") as string;
-  if (!name || name.trim() === "") {
-    return { error: "Project name is required" };
-  }
   try {
-    const newProject = await db.project.create({
-      data: {
-        name,
-        description,
-        userId: session.user.id, // نربط المشروع بصاحب الجلسة الحالي
-      },
+    // 2. التحقق من اشتراك المستخدم والليميت
+    const { plan } = await checkSubscription();
+    const projectCount = await db.project.count({
+      where: { userId: session.user.id },
     });
 
-    // داخل try block بعد إنشاء المشروع
-    await db.projectMember.create({
-      data: {
+    const limits: Record<string, number> = {
+      BASIC: 5,
+      PRO: 100,
+      ENTERPRISE: Infinity,
+    };
+
+    const MAX_PROJECTS = limits[plan] || 5;
+
+    if (projectCount >= MAX_PROJECTS) {
+      return {
+        error: `You have reached the limit of ${MAX_PROJECTS} projects`,
+      };
+    }
+
+    // 3. استخراج البيانات والتحقق منها
+    const name = formData.get("name") as string;
+    const description = formData.get("description") as string; // تأكد إنها description بالـ e وليس الـ i
+
+    if (!name || name.trim() === "") {
+      return { error: "Project name is required" };
+    }
+
+    // 4. تنفيذ العملية داخل Transaction مع إرجاع النتيجة لحل مشكلة النوع (Type)
+    const newProject = await db.$transaction(async (tx) => {
+      // إنشاء المشروع
+      const project = await tx.project.create({
+        data: {
+          name,
+          description,
+          userId: session.user.id,
+        },
+      });
+
+      // إضافة المالك لجدول الأعضاء
+      await tx.projectMember.create({
+        data: {
+          projectId: project.id,
+          userId: session.user.id,
+          role: "OWNER",
+        },
+      });
+
+      return project; // نرجع المشروع عشان نستخدمه برا الترانزاكشن
+    });
+
+    // 5. إرسال الويب هوك خارج الترانزاكشن (أسرع وأضمن)
+    if (newProject) {
+      await dispatchWebhook(session.user.id, "project.created", {
         projectId: newProject.id,
-        userId: session.user.id,
-        role: "OWNER",
-      },
-    });
-    await dispatchWebhook(session.user.id, "project.created", {
-      projectId: newProject.id,
-      name: newProject.name,
-      description: newProject.description,
-    });
+        name: newProject.name,
+        description: newProject.description,
+      });
+    }
 
+    // 6. تحديث الصفحة والرد بالنجاح
     revalidatePath("/dashboard");
     return { success: "Project created!" };
   } catch (error) {
-    return { error: "Failed to create project" };
+    console.error("CREATE_PROJECT_ERROR:", error);
+    return { error: "Failed to create project. Please try again." };
   }
 }
+//   try {
+//     const newProject = await db.project.create({
+//       data: {
+//         name,
+//         description,
+//         userId: session.user.id, // نربط المشروع بصاحب الجلسة الحالي
+//       },
+//     });
+
+//     // داخل try block بعد إنشاء المشروع
+//     await db.projectMember.create({
+//       data: {
+//         projectId: newProject.id,
+//         userId: session.user.id,
+//         role: "OWNER",
+//       },
+//     });
+//     await dispatchWebhook(session.user.id, "project.created", {
+//       projectId: newProject.id,
+//       name: newProject.name,
+//       description: newProject.description,
+//     });
+
+//     revalidatePath("/dashboard");
+//     return { success: "Project created!" };
+//   } catch (error) {
+//     return { error: "Failed to create project" };
+//   }
+// }
 
 export async function deleteProject(
-  prevState: any,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<void | any> {
+): Promise<ActionResponse> {
   const session = await auth();
   if (!session?.user?.id) return { error: "Unauthorized" };
 
@@ -262,9 +352,9 @@ export async function deleteProject(
 
 // أرشفة مشروع (بدلاً من حذفه)
 export async function archiveProject(
-  prevState: any,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<{ success?: string; error?: string }> {
+): Promise<ActionResponse> {
   const session = await auth();
   if (!session?.user?.id) {
     return { error: "Unauthorized" };
@@ -302,9 +392,9 @@ export async function archiveProject(
 
 // حذف نهائي لمشروع (يُستخدم فقط للمشاريع المؤرشفة)
 export async function permanentDeleteProject(
-  prevState: any,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<{ success?: string; error?: string }> {
+): Promise<ActionResponse> {
   const session = await auth();
   if (!session?.user?.id) {
     return { error: "Unauthorized" };
@@ -342,9 +432,9 @@ export async function permanentDeleteProject(
 
 // استعادة مشروع من الأرشيف
 export async function restoreProject(
-  prevState: any,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<{ success?: string; error?: string }> {
+): Promise<ActionResponse> {
   const session = await auth();
   if (!session?.user?.id) {
     return { error: "Unauthorized" };
@@ -379,10 +469,7 @@ export async function restoreProject(
   }
 }
 
-export async function toggleRole(
-  userId: string,
-  currentRole: string
-): Promise<{ error?: string; success?: string }> {
+export async function toggleRole(userId: string): Promise<ActionResponse> {
   const session = await auth();
   if (!session?.user) {
     return { error: "Not authenticated" };
@@ -390,23 +477,28 @@ export async function toggleRole(
   if (session?.user?.role !== "ADMIN") {
     return { error: "Unauthorized" };
   }
+
   try {
-    const newRole = currentRole === "ADMIN" ? "USER" : "ADMIN";
+    const user = await db.user.findFirst({
+      where: { id: userId },
+      select: { role: true },
+    });
+    if (!user) return { error: "User not found" };
+
+    const newRole = user.role === "ADMIN" ? "USER" : "ADMIN";
     await db.user.update({
       where: { id: userId },
       data: { role: newRole },
     });
     revalidatePath("/admin");
     return { success: "success toggle" };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error toggling role:", error);
     return { error: "Failed to update role" };
   }
 }
 
-export async function removeUser(
-  userId: string
-): Promise<{ error?: string; success?: string }> {
+export async function removeUser(userId: string): Promise<ActionResponse> {
   const session = await auth();
   if (!session?.user) {
     return { error: "Unauthorized" };
@@ -420,7 +512,7 @@ export async function removeUser(
     });
     revalidatePath("/admin");
     return { success: "user deleted" };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error deleting user:", error);
     return { error: "Failed to delete user" };
   }
@@ -428,9 +520,9 @@ export async function removeUser(
 
 // ====================== تعديل المشروع ======================
 export async function updateProject(
-  prevState: any,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<{ success?: string; error?: string }> {
+): Promise<ActionResponse> {
   const session = await auth();
   if (!session?.user?.id) {
     return { error: "Unauthorized" };

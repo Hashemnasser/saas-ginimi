@@ -13,7 +13,7 @@ export default function SettingsForm({ initialName }: { initialName: string }) {
     if (result?.error) {
       toast.error(result.error);
     } else {
-      await update({ name: formData.get("name") as string });
+      await update({ name: formData.get("name") as string }); //هون البارامتر nameهوي يلي رح ينتقل الى callback تبع nextAuth ويخزن في بارمتر session
       router.refresh(); // لضمان تحديث حالة السيرفر في النوافذ المفتوحة
 
       toast.success("Name updated! Refreshing...");

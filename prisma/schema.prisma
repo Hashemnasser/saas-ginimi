@@ -12,21 +12,24 @@ model Account {
   id       String @id @default(cuid())
   userId   String
   type     String
-  provider String
+  provider String    //المزود متل جوجل وجيت هاب 
 
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  providerAccountId String      //   الرقم الذي يرسله المزود لموقعي ليرتبط باسم المستخدم عن طريقه  وليس عن طريق اسم المستخدم لانه قد يتغير الاسم
+  refresh_token     String? @db.Text  //كل نصف ساعة access_token  رقم دائم يخزن في السيرفر ومسؤؤل عن تجديد 
+  access_token      String? @db.Text  //يتغير كل نصف ساعة لانة هو مفتاح مرافق لكل تواصل بين العميل والسيرفر 
+  expires_at        Int?               //access_tokenلمعرفة انتهاء صلاحية  
+  token_type        String?    // غالبا من نوع Bearer
+  scope             String?   //  مالصلاحيات التي يمنحها المزود متل جوجل للموقع للوصول لمعلومات المستخدم
+  id_token          String? @db.Text    //يمثل بطاقة الهوية التي فيها جميع المعلومات الخاصة بالمستخدم 
+  session_state     String?       //  nextauth  مسؤول عن التواصل مع المزود ومعرفة حالة المستخدم واعلام    
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
+
+
+
 
 model Session {
   id           String   @id @default(cuid())
@@ -54,7 +57,7 @@ model User {
   role                     Role      @default(USER)
   password                 String? // <--- أضف هذا السطر هنا
   isActive                 Boolean   @default(true)
-  emailVerified            DateTime?
+  emailVerified            DateTime?    //التحقق من المستخدم عند التسجيل او تغيرر كلمة المرور بارسال ايميل التثبيت او التحقق 
   image                    String?
   createdAt                DateTime  @default(now())
   updatedAt                DateTime? @updatedAt
@@ -95,7 +98,6 @@ model WebhookSubscription {
 }
 
 
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -124,6 +126,8 @@ enum ProjectMemberRole {
   OWNER // صاحب المشروع (يتم تعيينه عند الإنشاء)
 }
 
+
+
 // نموذج ربط المستخدمين بالمشاريع
 model ProjectMember {
   id        String            @id @default(cuid())
@@ -138,3 +142,4 @@ model ProjectMember {
 
   @@unique([projectId, userId]) // لا يمكن تكرار نفس المستخدم لنفس المشروع
 }
+

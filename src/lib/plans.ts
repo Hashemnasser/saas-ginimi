@@ -1,7 +1,26 @@
 // lib/plans.ts
 import { initializePlans, PLANS } from "./stripe";
 
-let plansCache: any[] | null = null;
+let plansCache:
+  | (
+      | {
+          priceId: null;
+          name: "BASIC" | "PRO" | "ENTERPRISE";
+          description: string;
+          price: number;
+          interval: "month" | "year";
+          projectLimit: number | "unlimited";
+        }
+      | {
+          priceId: string;
+          name: "BASIC" | "PRO" | "ENTERPRISE";
+          description: string;
+          price: number;
+          interval: "month" | "year";
+          projectLimit: number | "unlimited";
+        }
+    )[]
+  | null = null;
 
 export async function getPlans() {
   if (!plansCache) {

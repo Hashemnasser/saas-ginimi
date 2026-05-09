@@ -9,6 +9,7 @@ import { stripe } from "@/lib/stripe";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { PlanConfig } from "./../../../lib/stripe";
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -121,7 +122,7 @@ async function handleCheckoutSessionCompleted(session: any) {
         stripePriceId: priceId,
         stripeCurrentPeriodEnd: periodEnd,
         stripeSubscriptionStatus: true,
-        plan: plan?.name.toUpperCase() || "PRO", // افتراضياً Pro,
+        plan: (plan?.name.toUpperCase() as PlanConfig["name"]) || "PRO", // افتراضياً Pro,
         stripeSubscriptionStart: new Date(), // تاريخ بدء الاشتراك
       },
     });

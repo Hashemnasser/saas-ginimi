@@ -1,4 +1,49 @@
 import { db } from "@/lib/db";
+import { stripe } from "@/lib/stripe";
+import { unstable_cache } from "next/cache"; // إضافة الكاش
+
+// تحويل الدالة إلى دالة مخزنة (Cached) لتوفير موارد السيرفر وسترايب
+
+export const getCachedStats = unstable_cache(
+  async () => {
+    const [userCount, projectCount, activeSubscriptions] = await Promise.all([
+      db.user.count(),
+      db.project.count(),
+      db.user.count({ where: { stripeSubscriptionStatus: true } }),
+    ]);
+
+    let mrr = 0;
+    try {
+      // استخدام auto-paging من سترايب بدلاً من while اليدوية (أسهل وأضمن)
+      for await (const sub of stripe.subscriptions.list({
+        status: "active",
+        limit: 100,
+        expand: ["data.items.data.price"], // جلب تفاصيل السعر مسبقاً
+      })) {
+        const price = sub.items.data[0]?.price;
+        if (price && price.unit_amount) {
+          let monthlyAmount = price.unit_amount;
+          if (price.recurring?.interval === "year") {
+            monthlyAmount = Math.floor(monthlyAmount / 12);
+          }
+          mrr += monthlyAmount;
+        }
+      }
+    } catch (error) {
+      console.error("Stripe MRR fetch error:", error);
+    }
+
+    return {
+      userCount,
+      projectCount,
+      activeSubscriptions,
+      mrr: mrr / 100,
+    };
+  },
+  ["admin-stats"], // مفتاح الكاش
+  { revalidate: 3600, tags: ["admin-stats"] } // تحديث البيانات كل ساعة فقط
+);
+
 // الحصول على بيانات النمو (آخر 12 شهراً)
 export async function getGrowthData() {
   const now = new Date();

@@ -78,11 +78,7 @@ export default async function AdminPage() {
                 </td>
                 <td className="px-6 py-4">
                   {/* هنا نمرر البيانات لمكون الـ Client */}
-                  <AdminActions
-                    userId={u.id}
-                    currentRole={u.role || "USER"}
-                    userName={u.name as string}
-                  />
+                  <AdminActions userId={u.id} userName={u.name as string} />
                 </td>
               </tr>
             ))}

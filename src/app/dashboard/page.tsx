@@ -38,7 +38,6 @@ export default async function DashboardPage() {
       },
     },
   });
-
   // عدد المشاريع الحالي
   const currentProjectsCount = projects.length;
 
@@ -67,9 +66,7 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-3">
             <span
               className={`h-3 w-3 rounded-full ${
-                plan !== "BASIC"
-                  ? "bg-emerald-500"
-                  : "bg-slate-300    dark:bg-gray-800"
+                plan !== "BASIC" ? "bg-emerald-500" : "bg-slate-300    "
               }`}
             />
             <p className="text-xl font-medium">
@@ -82,68 +79,60 @@ export default async function DashboardPage() {
       </div>
 
       {/* نموذج إنشاء مشروع جديد */}
-      <div className="mb-8 p-6 bg-white   dark:bg-gray-900 border border-gray-200  dark:border-gray-700 rounded-2xl shadow-sm">
+
+      <div className="mb-8 p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm">
         <h2 className="text-lg font-semibold mb-4">Create New Project</h2>
         <CreateProjectForm
           currentcount={currentProjectsCount}
           maxLimit={maxProjects}
         />
-        {plan !== "BASIC" && currentProjectsCount >= maxProjects && (
-          <p className="text-sm text-red-500 mt-2">
-            You have reached the limit of free projects. Please upgrade to Pro
-            to create more.
+
+        {/* شرط نظيف ومباشر */}
+        {currentProjectsCount >= maxProjects && (
+          <p className="text-sm text-red-500 mt-2 font-medium">
+            You have reached the limit of {maxProjects} projects for your
+            current plan. Please upgrade to increase your limit.
           </p>
         )}
       </div>
-
       {/* قائمة المشاريع */}
-      <div className="bg-white   dark:bg-gray-900 border border-gray-200  dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 bg-gray-50  dark:bg-gray-800 border-b border-gray-200  dark:border-gray-700">
-          <h2 className="font-semibold">Your Projects</h2>
+      <div>
+        <div>
+          <h1>your projects</h1>
         </div>
         {projects.length === 0 ? (
-          <p className="p-6 text-gray-500 dark:text-gray-100 text-center   dark:bg-gray-900">
-            No projects yet. Create your first project above.
-          </p>
+          <p>NO project yet , Create your first project</p>
         ) : (
-          <ul className="divide-y divide-gray-100">
+          <ul>
             {projects.map((project) => {
               const userMember = project.projectMembers.find(
                 (m) => m.userId === session.user.id
               );
               const role = userMember?.role;
               return (
-                <li
-                  key={project.id}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50   dark:hover:bg-gray-800"
-                >
+                <li key={project.id}>
                   <div>
-                    <h3 className="font-medium text-gray-900   dark:bg-gray-900 dark:text-gray-100">
-                      {project.name}
-                    </h3>
-                    {project.description && (
-                      <p className="text-sm text-gray-500   dark:bg-gray-900 dark:text-gray-100">
-                        {project.description}
-                      </p>
-                    )}
+                    <h4>{project.name}</h4>
+                    {project.description && <p>{project.description}</p>}
                   </div>
-                  <div className="flex gap-2">
-                    {role === "EDITOR" || role === "OWNER" ? (
+                  <div>
+                    {(role === "OWNER" || role === "EDITOR") && (
                       <EditProjectForm
                         projectId={project.id}
                         initialName={project.name}
                         initialDescription={project.description}
                       />
-                    ) : null}
+                    )}
                     {role === "OWNER" && (
                       <ArchiveProjectButton id={project.id} />
                     )}
-
-                    <ShareProjectModal
-                      projectId={project.id}
-                      projectName={project.name}
-                      currentMembers={project.projectMembers}
-                    />
+                    {(role === "OWNER" || role === "EDITOR") && (
+                      <ShareProjectModal
+                        projectId={project.id}
+                        projectName={project.name}
+                        currentMembers={project.projectMembers}
+                      />
+                    )}
                   </div>
                 </li>
               );

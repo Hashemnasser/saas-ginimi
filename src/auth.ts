@@ -8,7 +8,7 @@ import Google from "next-auth/providers/google"; // استيراد جوجل
 import { z } from "zod";
 
 const loginSchema = z.object({
-  email: z.string().email("nvalid email"),
+  email: z.string().email("unvalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -57,10 +57,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {
+      //session : عندما يضغط المستخدم على تحديث يتكون طلب خفي من المتصفح الى السيرفر وتتخزن المعلومات القادمة في هذا المتغير
       // عند أول تسجيل دخول، نضع الـ ID في التوكن
       if (user) {
         token.id = user.id as string;
         token.role = user.role;
+        // --- أضف هذا السطر لضمان وجود الاسم في التوكن من البداية ---
+        token.name = user.name;
       }
 
       // النكشة الكبرى: استقبال التحديث القادم من الكلاينت (update)
@@ -72,6 +75,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     async session({ session, token }) {
+      //بعد التحديث يتم نقل المعلومات الجديدة الموضوعة في التوكن الي الجلسة
       // نربط بيانات التوكن المحدثة بالجلسة التي يراها المتصفح والناف بار
       if (session.user) {
         session.user.id = token.id as string;

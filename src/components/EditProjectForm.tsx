@@ -1,7 +1,7 @@
 "use client";
 
 import { updateProject } from "@/lib/actions";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface EditProjectFormProps {
@@ -17,7 +17,7 @@ export default function EditProjectForm({
 }: EditProjectFormProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [state, formAction, isPending] = useActionState(updateProject, null);
-  const formRef = useRef<HTMLFormElement>(null);
+  // const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state?.success) {
@@ -43,7 +43,7 @@ export default function EditProjectForm({
 
   return (
     <form
-      ref={formRef}
+      // ref={formRef}
       action={formAction}
       className="mt-2 p-3 border rounded-lg bg-gray-50  dark:bg-gray-800 space-y-2"
     >

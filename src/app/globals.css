@@ -1,4 +1,69 @@
 @import "tailwindcss";
+
+/* 1️⃣ تعريف الثيم والمتغيرات (Tailwind v4 Way) */
+@theme {
+  /* تفعيل الدارك مود عبر الكلاس ليقرأ من <html class="dark"> */
+  --dark-mode: class;
+
+  /* ربط متغيرات الـ CSS بكلاسات تايلوند الجاهزة */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-border: hsl(var(--border));
+}
+
+/* 2️⃣ تحديد القيم الفعلية (Variables) لكل وضع */
+@layer base {
+  :root {
+    /* وضع النهار (Light Mode) */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+  }
+
+  .dark {
+    /* وضع الليل (Dark Mode) - ألوان غامقة مريحة للعين */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --border: 217.2 32.6% 17.5%;
+  }
+}
+
+/* 3️⃣ تطبيق الإعدادات الأساسية على المتصفح */
+@layer base {
+  * {
+    /* لضمان أن الحدود (Borders) تأخذ اللون المعرف في الثيم تلقائياً */
+    @apply border-border;
+  }
+
+  body {
+    /* تطبيق الخلفية ولون النص الأساسي مع تنعيم حركة التبديل */
+    @apply bg-background text-foreground;
+    /* font-feature-settings: "مكياج" الخط (تعديل المسافات ودمج الحروف عشان تطلع اللوحة النهائية فخمة). */
+    font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
 /* 
 :root {
   --background: #ffffff;
@@ -25,7 +90,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
  */
-@layer base {
+/* @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -47,4 +112,4 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   transition: background-color 0.3s ease, color 0.3s ease;
-}
+} */

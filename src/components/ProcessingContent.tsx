@@ -4,7 +4,10 @@
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import useSWR from "swr";
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+//   or we can write  const  fetcher = async(url:string)=>{const res=await fetch(url) return res.json() }
 export default function ProcessingContent() {
   const router = useRouter();
   const { update } = useSession();
@@ -19,25 +22,20 @@ export default function ProcessingContent() {
     }
   }, [sessionId, router]);
 
+  const { data } = useSWR("/api/check-sub", fetcher, { refreshInterval: 2000 });
+
   useEffect(() => {
-    if (!sessionId) return;
-
-    const check = async () => {
-      const res = await fetch("/api/check-sub");
-      const { isPro } = await res.json();
-      console.log("⏳9 ", isPro);
-
-      if (isPro) {
-        await update();
-        router.push("/dashboard");
-      } else {
-        setTimeout(check, 2000);
-      }
-    };
-
-    check();
-  }, [router, update, sessionId]);
-
+    if (data?.isPro) {
+      (async () => {
+        try {
+          await update();
+          router.push("/dashboard");
+        } catch (err) {
+          console.error("فشل تحديث الجلسة:", err);
+        }
+      })(); //" async لا يقبل useEffect   "  لان  "async"حركة احترافية لاستدعاء الدالة المعلنة فورا ونحن اضطررنا لعمل دالة لاستخدام
+    }
+  }, [data, router, update]);
   if (!sessionId) return null;
 
   return (

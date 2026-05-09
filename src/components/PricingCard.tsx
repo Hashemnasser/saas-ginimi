@@ -9,7 +9,23 @@ export default function PricingCard({
   plan,
   userId,
 }: {
-  plan: any;
+  plan:
+    | {
+        priceId: null;
+        name: string;
+        description: string;
+        price: number;
+        interval: "month" | "year";
+        projectLimit: number | "unlimited";
+      }
+    | {
+        priceId: string;
+        name: string;
+        description: string;
+        price: number;
+        interval: "month" | "year";
+        projectLimit: number | "unlimited";
+      };
   userId?: string;
 }) {
   const [loading, setLoading] = useState(false);
@@ -21,12 +37,12 @@ export default function PricingCard({
       router.push("/login");
       return;
     }
+    setLoading(true);
 
     // إذا كانت الخطة مجانية (Basic)
     if (plan.price === 0) {
       // هنا نحدث خطة المستخدم مباشرة في قاعدة البيانات إلى BASIC
       // نحتاج دالة Server Action للتحديث
-      setLoading(true);
       try {
         const response = await fetch("/api/activate-free-plan", {
           method: "POST",
@@ -48,9 +64,11 @@ export default function PricingCard({
     }
 
     // للخطط المدفوعة
-    setLoading(true);
     try {
-      const { url } = await createCheckoutSession(userId, plan.priceId);
+      const { url } = await createCheckoutSession(
+        userId,
+        plan.priceId as string
+      );
       window.location.href = url as string;
     } catch (error) {
       toast.error("Failed to start checkout");

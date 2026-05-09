@@ -1,8 +1,8 @@
 import { auth, signOut } from "@/auth";
 import { revalidatePath } from "next/cache";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import ThemeToggle from "./ThemeToggle";
-
+const ThemeToggle = dynamic(import("./ThemeToggle"), { ssr: false });
 export default async function Navbar() {
   const session = await auth();
 

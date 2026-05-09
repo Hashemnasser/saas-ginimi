@@ -25,7 +25,10 @@ export default function GrowthCharts({ data }: { data: GrowthDataPoint[] }) {
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
+          <XAxis
+            dataKey="month"
+            interval={0} // أضف هذا السطر لإجبار ظهور كل الشهور
+          />
           <YAxis />
           <Tooltip />
           <Legend />

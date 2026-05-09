@@ -3,27 +3,38 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+// export interface ShareProjectModalProps {
+//   projectId: string;
+//   projectName: string;
+//   currentMembers: Array<{
+//     userId: string;
+//     role: string;
+//     user: { name?: string | null; email: string | null };
+//   }>;
+// }
+
 export interface ShareProjectModalProps {
   projectId: string;
   projectName: string;
-  currentMembers: Array<{
+  currentMembers: {
     userId: string;
-    role: string;
+    role: "OWNER" | "EDITOR" | "VIEWER";
     user: { name?: string | null; email: string | null };
-  }>;
+  }[];
 }
 
 export default function ShareProjectModal({
   projectId,
   projectName,
-  currentMembers,
+  currentMembers: initialCurrentMembers,
 }: ShareProjectModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("VIEWER");
   const [loading, setLoading] = useState(false);
+  const [currentMembers, setCurrentMembers] = useState(initialCurrentMembers);
 
-  const handleInvite = async (e: React.FormEvent) => {
+  const handleInvite = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -35,7 +46,9 @@ export default function ShareProjectModal({
       const data = await res.json();
       if (res.ok) {
         toast.success(`Invitation sent to ${email}`);
+        setCurrentMembers((prev) => [data.newMember, ...prev]);
         setEmail("");
+
         // يمكنك تحديث القائمة هنا بإعادة جلب البيانات
       } else {
         toast.error(data.error || "Failed to send invitation");

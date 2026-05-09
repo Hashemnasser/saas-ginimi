@@ -5,7 +5,7 @@ import NextError from "next/error";
 export default function GlobalError({
   error,
 }: {
-  error: Error & { digest?: string };
+  error: Error & { digest?: string }; // هنا نخبر TypeScript أن الخطأ قد يحتوي على "هوية مشفرة
 }) {
   // useEffect(() => {
   //   Sentry.captureException(error);

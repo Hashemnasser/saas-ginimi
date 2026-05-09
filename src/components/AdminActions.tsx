@@ -6,20 +6,15 @@ import { toast } from "sonner";
 
 interface AdminActionsProps {
   userId: string;
-  currentRole: string;
   userName: string;
 }
 
-export default function AdminActions({
-  userId,
-  currentRole,
-  userName,
-}: AdminActionsProps) {
+export default function AdminActions({ userId, userName }: AdminActionsProps) {
   const [isToggling, setIsToggling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const handleToggleRole = async () => {
     setIsToggling(true);
-    const result = await toggleRole(userId, currentRole);
+    const result = await toggleRole(userId);
     if (result?.error) {
       toast.error(result.error);
     } else if (result?.success) {
