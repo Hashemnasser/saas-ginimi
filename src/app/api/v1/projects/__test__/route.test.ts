@@ -8,11 +8,11 @@ vi.mock("next/server", async () => {
   return {
     ...actual,
     NextResponse: {
-      json: (data: any, init?: { status?: number }) => {
+      json: (data: unknown, init?: { status?: number }) => {
         return {
           status: init?.status || 200,
           json: async () => data,
-        } as any;
+        } as unknown;
       },
     },
   };

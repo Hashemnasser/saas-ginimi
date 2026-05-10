@@ -15,7 +15,7 @@ const WEBHOOK_SECRET =
 export async function dispatchWebhook(
   userId: string,
   event: string,
-  payload: any
+  payload: unknown
 ) {
   // 1. جلب جميع الاشتراكات النشطة للمستخدم التي تحتوي على هذا الحدث
   const subscriptions = await db.webhookSubscription.findMany({

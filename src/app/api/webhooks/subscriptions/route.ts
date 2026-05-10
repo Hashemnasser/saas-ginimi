@@ -79,9 +79,11 @@ export async function POST(req: Request) {
       },
     });
     return NextResponse.json({ subscription }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     // خطأ التكرار (unique constraint)
-    if (error.code === "P2002") {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    if (errorMessage === "P2002") {
       return NextResponse.json(
         { error: "You already have a subscription with this URL" },
         { status: 409 }
