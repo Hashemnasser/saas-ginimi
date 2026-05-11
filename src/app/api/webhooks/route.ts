@@ -115,6 +115,7 @@ async function handleCheckoutSessionCompleted(
 }
 
 async function handleInvoicePaymentFailed(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   invoice: Stripe.Invoice & { subscription?: string | null | any }
 ) {
   try {

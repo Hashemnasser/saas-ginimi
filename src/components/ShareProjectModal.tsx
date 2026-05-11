@@ -73,7 +73,9 @@ export default function ShareProjectModal({
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50  dark:bg-gray-100 flex items-center justify-center z-50">
           <div className="bg-white   dark:bg-gray-900 rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Share "{projectName}"</h2>
+            <h2 className="text-xl font-bold mb-4">
+              Share &quot;{projectName}&quot;
+            </h2>
             <form onSubmit={handleInvite} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium">

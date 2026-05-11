@@ -22,6 +22,7 @@ export default function EditProjectForm({
   useEffect(() => {
     if (state?.success) {
       toast.success(state.success);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsEditing(false); // إغلاق النموذج بعد النجاح
     }
     if (state?.error) {

@@ -56,7 +56,8 @@ export default function ApiKeySection({
       ) : (
         <div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-            You don't have an API key yet. Generate one to use the REST API.
+            You don&apos;t have an API key yet. Generate one to use the REST
+            API.
           </p>
           <button
             onClick={handleGenerate}
