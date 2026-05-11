@@ -32,8 +32,8 @@ export default function ProcessingContent() {
     fetcher,
     {
       refreshInterval: 2000,
-      revalidateOnFocus: true,
-      dedupingInterval: 0, // هاد السطر بيضمن إنه ما يعتمد على الكاش القديم
+      // revalidateOnFocus: true,
+      // dedupingInterval: 0, // هاد السطر بيضمن إنه ما يعتمد على الكاش القديم
     }
   );
   console.log("⏳ data.isPro", data?.isPro);
