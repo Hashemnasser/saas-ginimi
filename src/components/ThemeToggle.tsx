@@ -7,9 +7,9 @@ export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
     // ضروري تحط القوسين {}في يوز ايفيكت
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []); //الغاية ما نخلي المتصفح يعرض الزر يلي متشكل في السيرفر باول عملية رندر بل انو منأخرو للمرة الثانية وبالتالي الرندرة بتصير بالمتصفح بناء على معلومات المتصفح نفسه
 
