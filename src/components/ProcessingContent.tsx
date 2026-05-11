@@ -23,7 +23,7 @@ export default function ProcessingContent() {
   }, [sessionId, router]);
 
   const { data } = useSWR("/api/check-sub", fetcher, { refreshInterval: 2000 });
-
+  console.log("⏳ data.isPro", data?.isPro);
   useEffect(() => {
     if (data?.isPro) {
       (async () => {
