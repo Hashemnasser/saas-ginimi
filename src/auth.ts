@@ -14,6 +14,11 @@ const loginSchema = z.object({
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
+  // ...
+  pages: {
+    signIn: "/login", // تأكد إنك محدد إن صفحة الدخول هي login
+  },
+
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
