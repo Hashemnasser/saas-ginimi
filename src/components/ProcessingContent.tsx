@@ -6,8 +6,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import useSWR from "swr";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-//   or we can write  const  fetcher = async(url:string)=>{const res=await fetch(url) return res.json() }
+const fetcher = (url: string) =>
+  fetch(url).then((res) => {
+    if (!res.ok) throw new Error("فشل جلب البيانات");
+    return res.json();
+  }); //   or we can write  const  fetcher = async(url:string)=>{const res=await fetch(url) return res.json() }
 export default function ProcessingContent() {
   const router = useRouter();
   const { update } = useSession();
@@ -22,7 +25,9 @@ export default function ProcessingContent() {
     }
   }, [sessionId, router]);
 
-  const { data } = useSWR("/api/check-sub", fetcher, { refreshInterval: 2000 });
+  const { data } = useSWR(`/api/check-sub?t=${Date.now()}`, fetcher, {
+    refreshInterval: 2000,
+  });
   console.log("⏳ data.isPro", data?.isPro);
   useEffect(() => {
     if (data?.isPro) {
