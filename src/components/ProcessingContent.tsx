@@ -27,7 +27,8 @@ export default function ProcessingContent() {
 
   // استخدم الـ sessionId كمرجع وحيد، الـ refreshInterval لحاله رح يخلي الطلب يتحدث
   const { data } = useSWR(
-    sessionId ? `/api/check-sub?session_id=${sessionId}` : null,
+    // sessionId ?
+    `/api/check-sub?session_id=${sessionId}`,
     fetcher,
     {
       refreshInterval: 2000,
