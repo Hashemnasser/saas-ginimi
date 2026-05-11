@@ -1,6 +1,7 @@
 "use client";
 
 import { loginUser, loginWithGithub, loginWithGoogle } from "@/lib/actions";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -91,6 +92,15 @@ export default function LoginPage() {
           >
             GitHub
           </button>
+        </div>
+        <div className="mt-6 text-center text-sm text-gray-600  dark:text-gray-100">
+          Don't have an account?{" "}
+          <Link
+            href="/register"
+            className="text-blue-600 hover:underline font-medium"
+          >
+            Create one
+          </Link>
         </div>
       </div>
     </div>
