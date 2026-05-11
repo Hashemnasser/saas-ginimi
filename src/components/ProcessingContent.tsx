@@ -25,9 +25,16 @@ export default function ProcessingContent() {
     }
   }, [sessionId, router]);
 
-  const { data } = useSWR(`/api/check-sub?t=${Date.now()}`, fetcher, {
-    refreshInterval: 2000,
-  });
+  // استخدم الـ sessionId كمرجع وحيد، الـ refreshInterval لحاله رح يخلي الطلب يتحدث
+  const { data } = useSWR(
+    sessionId ? `/api/check-sub?session_id=${sessionId}` : null,
+    fetcher,
+    {
+      refreshInterval: 2000,
+      revalidateOnFocus: true,
+      dedupingInterval: 0, // هاد السطر بيضمن إنه ما يعتمد على الكاش القديم
+    }
+  );
   console.log("⏳ data.isPro", data?.isPro);
   useEffect(() => {
     if (data?.isPro) {
