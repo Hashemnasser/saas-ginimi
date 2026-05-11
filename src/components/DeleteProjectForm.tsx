@@ -28,7 +28,7 @@ export default function DeleteProjectButton({ id }: { id: string }) {
         toastIdRef.current = null;
       }
     }
-  }, [isPending, state]); // راقب الاثنين معاً
+  }, [isPending, state, router]); // راقب الاثنين معاً
   return (
     <form action={actionForm}>
       <input type="hidden" name="projectId" value={id} />
