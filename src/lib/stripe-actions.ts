@@ -2,6 +2,7 @@
 
 import { stripe } from "@/lib/stripe";
 import { db } from "./db";
+import { checkSubscription } from "./subscription";
 
 export const createCheckoutSession = async (
   userId: string,
@@ -11,11 +12,11 @@ export const createCheckoutSession = async (
     throw new Error("User ID and Price ID are required");
   }
 
-  // const { isActive } = await checkSubscription();
-  // if (isActive) {
-  //   const portalSession = await createCustomerPortalSession(userId);
-  //   return { url: portalSession.url };
-  // }
+  const { isActive } = await checkSubscription();
+  if (isActive) {
+    const portalSession = await createCustomerPortalSession(userId);
+    return { url: portalSession.url };
+  }
 
   const session = await stripe.checkout.sessions.create({
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/processing?session_id={CHECKOUT_SESSION_ID}`,

@@ -20,8 +20,7 @@ export const checkSubscription = async () => {
   console.log("⏳9900user", user);
   if (!user) return { isActive: false, plan: "BASIC" };
 
-  const isActive = true;
-  // user.stripeSubscriptionStatus === true &&
+  const isActive = user.stripeSubscriptionStatus === true; //&&
   // (user?.stripeCurrentPeriodEnd?.getTime() || 0) > Date.now();
   console.log("⏳99 ", isActive);
   console.log(
