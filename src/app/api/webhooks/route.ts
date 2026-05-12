@@ -86,7 +86,7 @@ async function handleCheckoutSessionCompleted(
     );
 
     const periodEnd = new Date(
-      ((subscription.current_period_end || 0) as number) * 1000
+      subscription.current_period_end || 2026 / 12 / 12
     );
     console.log("⏳⚠️333periodEnd", periodEnd);
 
