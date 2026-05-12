@@ -17,13 +17,18 @@ export const checkSubscription = async () => {
       plan: true,
     },
   });
-
+  console.log("⏳9900user", user);
   if (!user) return { isActive: false, plan: "BASIC" };
 
-  const isActive =
-    user.stripeSubscriptionStatus === true &&
-    (user?.stripeCurrentPeriodEnd?.getTime() || 0) > Date.now();
+  const isActive = true;
+  // user.stripeSubscriptionStatus === true &&
+  // (user?.stripeCurrentPeriodEnd?.getTime() || 0) > Date.now();
   console.log("⏳99 ", isActive);
+  console.log(
+    "⏳stripeCurrentPeriodEnd",
+    (user?.stripeCurrentPeriodEnd?.getTime() || 0) > Date.now()
+  );
+
   return {
     isActive,
     plan: user.plan,
