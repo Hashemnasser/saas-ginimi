@@ -85,9 +85,13 @@ async function handleCheckoutSessionCompleted(
       subscription.current_period_end
     );
 
-    const periodEnd = new Date(
-      subscription.current_period_end || 2026 / 12 / 12
-    );
+    // تأكد إن القيمة موجودة قبل ما تضربها بـ 1000
+    // 1. حول الـ subscription لـ Stripe.Subscription عشان تقدر تقرأ اللي جواه
+
+    // 2. هلق صار فيك تقرأ الـ current_period_end بأمان
+    const periodEnd = subscription.current_period_end
+      ? new Date(subscription.current_period_end * 1000)
+      : null;
     console.log("⏳⚠️333periodEnd", periodEnd);
 
     const priceId = subscription.items.data[0].price.id;
