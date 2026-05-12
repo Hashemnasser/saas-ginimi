@@ -80,10 +80,16 @@ async function handleCheckoutSessionCompleted(
       console.log("⏳⚠️ Webhook already processed or user already active.");
       return;
     }
+    console.log(
+      "⏳⚠️subscription.current_period_end ",
+      subscription.current_period_end
+    );
 
     const periodEnd = new Date(
       ((subscription.current_period_end || 0) as number) * 1000
     );
+    console.log("⏳⚠️333periodEnd", periodEnd);
+
     const priceId = subscription.items.data[0].price.id;
     const plan = getPlanByPriceId(priceId);
 
