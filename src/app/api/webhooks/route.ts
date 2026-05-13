@@ -5,7 +5,7 @@ import {
   sendWelcomeEmail,
 } from "@/lib/email";
 import { getPlanByPriceId } from "@/lib/plans";
-import { PlanConfig, stripe } from "@/lib/stripe";
+import { stripe } from "@/lib/stripe";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -68,35 +68,36 @@ async function handleCheckoutSessionCompleted(
       return;
     }
 
-    const subscription = (await stripe.subscriptions.retrieve(
-      subscriptionId
-    )) as Stripe.Subscription & { current_period_end?: number };
+    // جلب الاشتراك كامل لضمان وجود التواريخ
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-    const existingUser = await db.user.findFirst({
-      where: { stripeSubscriptionId: subscriptionId },
-    });
+    // التحقق من المستخدم باستخدام الـ ID اللي جاي من الميتادات وليس السبسكريبشن آيدي
+    const user = await db.user.findUnique({ where: { id: userId } });
 
-    if (existingUser?.stripeSubscriptionStatus) {
-      console.log("⏳⚠️ Webhook already processed or user already active.");
+    if (!user) {
+      console.error("❌ User not found in database:", userId);
       return;
     }
-    console.log(
-      "⏳⚠️subscription.current_period_end ",
-      subscription.current_period_end
-    );
 
-    // تأكد إن القيمة موجودة قبل ما تضربها بـ 1000
-    // 1. حول الـ subscription لـ Stripe.Subscription عشان تقدر تقرأ اللي جواه
+    // إذا كان المستخدم أصلاً مفعل، ما في داعي نعيد العملية (Idempotency)
+    if (user.stripeSubscriptionStatus) {
+      console.log("⏳⚠️ Webhook already processed for this user.");
+      return;
+    }
 
-    // 2. هلق صار فيك تقرأ الـ current_period_end بأمان
-    const periodEnd = subscription.current_period_end
-      ? new Date(subscription.current_period_end * 1000)
-      : null;
-    console.log("⏳⚠️333periodEnd", periodEnd);
+    // تحويل التاريخ بأمان
+    // 2. الوصول للقيمة بطريقة "المفتاح" عشان نتجاوز غباء التايب سكريبت
+    const rawEnd =
+      subscription["current_period_end" as keyof typeof subscription];
 
+    // 3. التحويل لتاريخ بأمان
+    const periodEnd = rawEnd ? new Date((rawEnd as number) * 1000) : null;
+
+    console.log("📅 Period End captured successfully:", periodEnd);
     const priceId = subscription.items.data[0].price.id;
     const plan = getPlanByPriceId(priceId);
 
+    // التحديث باستخدام userId
     await db.user.update({
       where: { id: userId },
       data: {
@@ -105,16 +106,16 @@ async function handleCheckoutSessionCompleted(
         stripePriceId: priceId,
         stripeCurrentPeriodEnd: periodEnd,
         stripeSubscriptionStatus: true,
-        plan: (plan?.name.toUpperCase() as PlanConfig["name"]) || "PRO",
+        plan: (plan?.name.toUpperCase() as any) || "PRO",
         stripeSubscriptionStart: new Date(),
       },
     });
 
-    const user = await db.user.findUnique({ where: { id: userId } });
-    if (user?.email) {
+    if (user.email) {
       await sendWelcomeEmail(user.email, user.name || "User");
     }
 
+    // مهم جداً لتحديث الكاش في Next.js
     revalidatePath("/dashboard");
     console.log("✅ Subscription activated for user:", userId);
   } catch (error) {
@@ -123,6 +124,74 @@ async function handleCheckoutSessionCompleted(
     console.error("❌ Error in handleCheckoutSessionCompleted:", errorMessage);
   }
 }
+
+// async function handleCheckoutSessionCompleted(
+//   session: Stripe.Checkout.Session
+// ) {
+//   try {
+//     const userId = session?.metadata?.userId;
+//     const subscriptionId = session.subscription as string;
+
+//     if (!userId) {
+//       console.error("⏳❌ User ID missing in checkout session metadata");
+//       return;
+//     }
+
+//     const subscription = (await stripe.subscriptions.retrieve(
+//       subscriptionId
+//     )) as Stripe.Subscription & { current_period_end?: number };
+
+//     const existingUser = await db.user.findFirst({
+//       where: { stripeSubscriptionId: subscriptionId },
+//     });
+
+//     if (existingUser?.stripeSubscriptionStatus) {
+//       console.log("⏳⚠️ Webhook already processed or user already active.");
+//       return;
+//     }
+//     console.log(
+//       "⏳⚠️subscription.current_period_end ",
+//       subscription.current_period_end
+//     );
+
+//     // تأكد إن القيمة موجودة قبل ما تضربها بـ 1000
+//     // 1. حول الـ subscription لـ Stripe.Subscription عشان تقدر تقرأ اللي جواه
+
+//     // 2. هلق صار فيك تقرأ الـ current_period_end بأمان
+//     const periodEnd = subscription.current_period_end
+//       ? new Date(subscription.current_period_end * 1000)
+//       : null;
+//     console.log("⏳⚠️333periodEnd", periodEnd);
+
+//     const priceId = subscription.items.data[0].price.id;
+//     const plan = getPlanByPriceId(priceId);
+
+//     await db.user.update({
+//       where: { id: userId },
+//       data: {
+//         stripeSubscriptionId: subscription.id,
+//         stripeCustomerId: subscription.customer as string,
+//         stripePriceId: priceId,
+//         stripeCurrentPeriodEnd: periodEnd,
+//         stripeSubscriptionStatus: true,
+//         plan: (plan?.name.toUpperCase() as PlanConfig["name"]) || "PRO",
+//         stripeSubscriptionStart: new Date(),
+//       },
+//     });
+
+//     const user = await db.user.findUnique({ where: { id: userId } });
+//     if (user?.email) {
+//       await sendWelcomeEmail(user.email, user.name || "User");
+//     }
+
+//     revalidatePath("/dashboard");
+//     console.log("✅ Subscription activated for user:", userId);
+//   } catch (error) {
+//     const errorMessage =
+//       error instanceof Error ? error.message : "Unknown error";
+//     console.error("❌ Error in handleCheckoutSessionCompleted:", errorMessage);
+//   }
+// }
 
 async function handleInvoicePaymentFailed(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -69,7 +69,7 @@ export default function PricingCard({
         userId,
         plan.priceId as string
       );
-      window.location.href = url as string;
+      window.location.href = url as string; //  رابط الانتقال الى سترايب للدفع   وهو رابط خارجي لذا استخدمنا هذا الكود وليس اليوزراوتر
     } catch (error) {
       toast.error("Failed to start checkout");
     } finally {

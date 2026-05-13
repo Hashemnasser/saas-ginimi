@@ -26,14 +26,28 @@ export default function ProcessingContent() {
   }, [sessionId, router]);
 
   // استخدم الـ sessionId كمرجع وحيد، الـ refreshInterval لحاله رح يخلي الطلب يتحدث
-  const { data } = useSWR(
-    // sessionId ?
+  // const { data } = useSWR(
+  //   // sessionId ?
+  //   `/api/check-sub`,
+  //   fetcher,
+  //   {
+  //     refreshInterval: 2000,
+  //     // revalidateOnFocus: true,
+  //     // dedupingInterval: 0, // هاد السطر بيضمن إنه ما يعتمد على الكاش القديم
+  //   }
+  // );
+
+  const { data, error, isLoading } = useSWR(
     `/api/check-sub`,
-    fetcher,
+    async (url) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch");
+      return res.json();
+    },
     {
       refreshInterval: 2000,
-      // revalidateOnFocus: true,
-      // dedupingInterval: 0, // هاد السطر بيضمن إنه ما يعتمد على الكاش القديم
+      onError: (error) => console.error("SWR Error:", error),
+      fallbackData: { name: "Loading..." },
     }
   );
   console.log("⏳ data.isPro", data?.isPro);
@@ -53,10 +67,13 @@ export default function ProcessingContent() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
+      <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mb-4">
+        {isLoading && <p>Loading ... ... ...</p>}{" "}
+      </div>
       <p className="text-lg font-medium">
         جاري تأكيد اشتراكك، لحظات من فضلك...
       </p>
+      <p>{error}</p>
     </div>
   );
 }
