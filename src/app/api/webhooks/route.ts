@@ -92,8 +92,13 @@ async function handleCheckoutSessionCompleted(
       subscription["current_period_end" as keyof typeof subscription];
 
     // 3. التحويل لتاريخ بأمان
-    const periodEnd = rawEnd ? new Date((rawEnd as number) * 1000) : null;
+    const timestamp = Number(rawEnd);
 
+    // 2. التحويل مع فحص إضافي
+    let periodEnd: Date | null = null;
+    if (timestamp && !isNaN(timestamp)) {
+      periodEnd = new Date(timestamp * 1000);
+    }
     console.log("📅 Period End captured successfully:", periodEnd);
     const priceId = subscription.items.data[0].price.id;
     const plan = getPlanByPriceId(priceId);
