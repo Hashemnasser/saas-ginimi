@@ -86,20 +86,10 @@ async function handleCheckoutSessionCompleted(
       return;
     }
 
-    // تحويل التاريخ بأمان
-    // 2. الوصول للقيمة بطريقة "المفتاح" عشان نتجاوز غباء التايب سكريبت
-    const rawEnd =
-      subscription["current_period_end" as keyof typeof subscription];
-
-    // 3. التحويل لتاريخ بأمان
-    const timestamp = Number(rawEnd);
-
-    // 2. التحويل مع فحص إضافي
-    let periodEnd: Date | null = null;
-    if (timestamp && !isNaN(timestamp)) {
-      periodEnd = new Date(timestamp * 1000);
-    }
-    console.log("📅 Period End captured successfully:", periodEnd);
+    const firstItem = subscription.items.data[0];
+    const periodEndUnix = firstItem.current_period_end;
+    const periodEndDate = new Date(periodEndUnix * 1000);
+    console.log("📅 Period End captured successfully:", periodEndDate);
     const priceId = subscription.items.data[0].price.id;
     const plan = getPlanByPriceId(priceId);
 
@@ -110,7 +100,7 @@ async function handleCheckoutSessionCompleted(
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
         stripePriceId: priceId,
-        stripeCurrentPeriodEnd: periodEnd,
+        stripeCurrentPeriodEnd: periodEndDate,
         stripeSubscriptionStatus: true,
         plan: (plan?.name.toUpperCase() as Plan) || "PRO",
         stripeSubscriptionStart: new Date(),
@@ -199,9 +189,10 @@ async function handleCheckoutSessionCompleted(
 //   }
 // }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 async function handleInvoicePaymentFailed(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  invoice: Stripe.Invoice & { subscription?: string | null | any }
+  invoice: Stripe.Invoice & { subscription?: string | null }
 ) {
   try {
     const subscriptionId = invoice.subscription;
@@ -229,9 +220,7 @@ async function handleInvoicePaymentFailed(
   }
 }
 
-async function handleSubscriptionUpdated(
-  subscription: Stripe.Subscription & { current_period_end?: number }
-) {
+async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   try {
     const customerId = subscription.customer as string;
     const user = await db.user.findFirst({
@@ -242,13 +231,11 @@ async function handleSubscriptionUpdated(
     if (!user) return;
 
     const status = subscription.status;
-    const cancelAtPeriodEnd = subscription.cancel_at_period_end;
-    const periodEnd = new Date(
-      ((subscription.current_period_end || 0) as number) * 1000
-    );
 
-    // الاشتراك يعتبر نشط فقط إذا كان status هو active ولم يتم تفعيل الإلغاء لنهاية المدة
+    const cancelAtPeriodEnd = subscription.cancel_at_period_end;
+    const periodEndTimestamp = subscription.items.data[0].current_period_end;
     const isActive = status === "active" && !cancelAtPeriodEnd;
+    const periodEnd = new Date(periodEndTimestamp * 1000);
 
     await db.user.update({
       where: { id: user.id },
