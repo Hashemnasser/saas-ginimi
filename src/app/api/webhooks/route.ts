@@ -6,6 +6,7 @@ import {
 } from "@/lib/email";
 import { getPlanByPriceId } from "@/lib/plans";
 import { stripe } from "@/lib/stripe";
+import { Plan } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -106,7 +107,7 @@ async function handleCheckoutSessionCompleted(
         stripePriceId: priceId,
         stripeCurrentPeriodEnd: periodEnd,
         stripeSubscriptionStatus: true,
-        plan: (plan?.name.toUpperCase() as any) || "PRO",
+        plan: (plan?.name.toUpperCase() as Plan) || "PRO",
         stripeSubscriptionStart: new Date(),
       },
     });
