@@ -21,6 +21,7 @@ export default function ProcessingContent() {
   // التحقق المبكر من وجود sessionId
   useEffect(() => {
     if (!sessionId) {
+      console.warn("⚠️ No sessionId found, redirecting to /");
       router.replace("/");
     }
   }, [sessionId, router]);
@@ -31,10 +32,10 @@ export default function ProcessingContent() {
     fetcher,
     {
       refreshInterval: 2000,
-      revalidateOnFocus: true,
-      shouldRetryOnError: true,
-      errorRetryCount: 3,
-      dedupingInterval: 0,
+      // revalidateOnFocus: true,
+      // shouldRetryOnError: true,
+      // errorRetryCount: 3,
+      // dedupingInterval: 0,
     }
   );
 
@@ -50,7 +51,10 @@ export default function ProcessingContent() {
   }, [data, router, update]);
 
   // إذا لم يوجد sessionId، لا نعرض شيئًا (سيتم التوجيه فورًا)
-  if (!sessionId) return null;
+  if (!sessionId) {
+    console.warn("⚠️ Rendering null because no sessionId");
+    return null;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">

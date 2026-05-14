@@ -12,6 +12,9 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 export async function POST(req: Request) {
+  console.time("webhook"); // بدأ计时
+  // التحقق من التوقيع (signature)...
+
   const body = await req.text();
   const signature = req.headers.get("Stripe-Signature") as string;
   let event: Stripe.Event;
@@ -54,12 +57,17 @@ export async function POST(req: Request) {
       console.log(`⏳ Unhandled event type: ${event.type}`);
   }
 
+  console.timeEnd("webhook"); // خلص计时 للويب هوك كله
+
   return NextResponse.json({ received: true }, { status: 200 });
 }
 
 async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
 ) {
+  console.time("db-query"); // بدأ计时 للاستعلام
+  // استعلام قاعدة البيانات...
+
   try {
     const userId = session?.metadata?.userId;
     const subscriptionId = session.subscription as string;
@@ -114,6 +122,7 @@ async function handleCheckoutSessionCompleted(
     // مهم جداً لتحديث الكاش في Next.js
     revalidatePath("/dashboard");
     console.log("✅ Subscription activated for user:", userId);
+    console.timeEnd("db-query"); // خلص计时 للاستعلا
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
