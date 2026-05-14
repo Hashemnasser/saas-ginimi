@@ -29,6 +29,11 @@ export const checkSubscription = async () => {
     (user?.stripeCurrentPeriodEnd?.getTime() || 0) > Date.now()
   );
 
+  console.log("🔍 Final isActive:", isActive);
+  console.log("🔍 stripeSubscriptionStatus:", user.stripeSubscriptionStatus);
+  console.log("🔍 stripeCurrentPeriodEnd:", user.stripeCurrentPeriodEnd);
+  console.log("🔍 now:", new Date().toISOString());
+
   return {
     isActive,
     plan: user.plan,
