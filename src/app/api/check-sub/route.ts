@@ -1,9 +1,6 @@
 import { checkSubscription } from "@/lib/subscription"; // تأكد من المسار الصحيح لدالتك
 import { NextResponse } from "next/server";
 
-// export const dynamic = "force-dynamic";
-// export const revalidate = 0;
-
 export async function GET() {
   // استدعاء دالتك التي كتبتها أنت
   console.log("⏳ 100");
@@ -15,8 +12,8 @@ export async function GET() {
     { isPro: isActive }
     // {
     //   headers: {
-    //     "Cache-Control": "no-cache, no-store, must-revalidate",
-    //     Pragma: "no-cache",
+    //     "Cache-Control": "no-cache, no-store, must-revalidate",   //منع التخزين للمتصفحات الحديثة
+    //     Pragma: "no-cache",   // منع التخزين للمتصفحات القديمة
     //     Expires: "0",
     //   },
     // }

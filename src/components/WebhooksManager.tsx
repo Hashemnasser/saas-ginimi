@@ -61,10 +61,8 @@ export default function WebhooksManager({
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure?")) return;
     try {
-      const res = await fetch("/api/webhooks/subscriptions", {
+      const res = await fetch(`/api/webhooks/subscriptions?id = ${id}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
       });
       if (res.ok) {
         setSubscriptions(subscriptions.filter((s) => s.id !== id));

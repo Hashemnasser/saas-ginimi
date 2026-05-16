@@ -31,11 +31,11 @@ export default function ProcessingContent() {
     sessionId ? "/api/check-sub" : null, // لا تجلب إذا لم يوجد sessionId
     fetcher,
     {
-      refreshInterval: 2000,
-      // revalidateOnFocus: true,
-      // shouldRetryOnError: true,
-      // errorRetryCount: 3,
-      // dedupingInterval: 0,
+      refreshInterval: 2000, //  اعادة الجلب كل ثانيتين
+      revalidateOnFocus: true, //عند تغيير صفحة الموقع الى صفحة اخرى يتم التحديث التلقائي للفيتش فور العودة للموقع
+      shouldRetryOnError: true, //عند حدوث خطا في الطلب يعيد الطلب تلقائي مثل فصل الشبكة
+      errorRetryCount: 3, //عدد محاولات الاعادة للطلب في حال الخطأ
+      dedupingInterval: 0, //لمنع استخدام معلومات من عملية جلب سابقة
     }
   );
 

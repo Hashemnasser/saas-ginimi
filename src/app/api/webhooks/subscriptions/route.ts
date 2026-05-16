@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 // GET: جلب جميع اشتراكات المستخدم الحالي
 export async function GET() {
@@ -98,38 +98,42 @@ export async function POST(req: Request) {
 }
 
 // DELETE: حذف اشتراك (نستخدم معرف الاشتراك في جسم الطلب أو في query)
-export async function DELETE(req: Request) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let body;
+export async function DELETE(req: NextRequest) {
   try {
-    body = await req.json();
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const id = req.nextUrl.searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Subscription ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // التأكد من أن الاشتراك يخص المستخدم الحالي
+    const subscription = await db.webhookSubscription.findFirst({
+      where: { id, userId: session.user.id },
+    });
+    if (!subscription) {
+      return NextResponse.json(
+        { error: "Subscription not found" },
+        { status: 404 }
+      );
+    }
+
+    await db.webhookSubscription.delete({ where: { id } });
+    return NextResponse.json(
+      { success: true, message: "Webhook Subscription deleted" },
+      { status: 200 }
+    );
   } catch (error) {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
-
-  const { id } = body;
-  if (!id) {
     return NextResponse.json(
-      { error: "Subscription ID is required" },
-      { status: 400 }
+      { error: "Internal server error " },
+      { status: 500 }
     );
   }
-
-  // التأكد من أن الاشتراك يخص المستخدم الحالي
-  const subscription = await db.webhookSubscription.findFirst({
-    where: { id, userId: session.user.id },
-  });
-  if (!subscription) {
-    return NextResponse.json(
-      { error: "Subscription not found" },
-      { status: 404 }
-    );
-  }
-
-  await db.webhookSubscription.delete({ where: { id } });
-  return NextResponse.json({ success: true });
 }
