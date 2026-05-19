@@ -2,20 +2,46 @@ import crypto from "crypto";
 import { db } from "./db";
 
 // سر التوقيع (يجب أن يكون في متغيرات البيئة)
-const WEBHOOK_SECRET =
-  process.env.STRIPE_WEBHOOK_SECRET || "default-secret-change-me";
-// const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "default-secret-change-me";
-
+const WEBHOOK_SECRET = process.env.OUTGOING_WEBHOOK_SECRET;
+if (!WEBHOOK_SECRET) {
+  throw new Error("Missing OUTGOING_WEBHOOK_SECRET in environment variables");
+}
 /**
  * إرسال webhook إلى جميع المشتركين في حدث معين
  * @param userId - معرف المستخدم الذي حدث لديه الحدث
  * @param event - اسم الحدث (مثل "project.created")
  * @param payload - البيانات المرسلة (ستُحول إلى JSON)
  */
-export async function dispatchWebhook(
+
+type CreatedPayload = {
+  projectId: string;
+  name: string;
+  description?: string;
+};
+
+type UpdatedPayload = {
+  projectId: string;
+} & (
+  | { name: string; description: string }
+  | { name: string; description?: string }
+  | { name?: string; description: string }
+);
+
+type ArchivedPayload = { projectId: string };
+
+export interface WebhookPayloadMap {
+  "project.created": CreatedPayload;
+  "project.updated": UpdatedPayload;
+  "project.archived": ArchivedPayload;
+  "project.restored": ArchivedPayload;
+}
+
+type KnownEvent = keyof WebhookPayloadMap; //type KnownEvent='project.created' | 'project.updated' | 'project.archived' | 'project.restored'
+
+export async function dispatchWebhook<T extends KnownEvent>(
   userId: string,
-  event: string,
-  payload: unknown
+  event: T,
+  payload: WebhookPayloadMap[T]
 ) {
   // 1. جلب جميع الاشتراكات النشطة للمستخدم التي تحتوي على هذا الحدث
   const subscriptions = await db.webhookSubscription.findMany({
@@ -38,7 +64,7 @@ export async function dispatchWebhook(
 
   // 3. حساب التوقيع (HMAC-SHA256)
   const signature = crypto
-    .createHmac("sha256", WEBHOOK_SECRET)
+    .createHmac("sha256", WEBHOOK_SECRET as string)
     .update(bodyString)
     .digest("hex");
 

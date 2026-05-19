@@ -244,7 +244,7 @@ export async function createProject(
 
     // 3. استخراج البيانات والتحقق منها
     const name = formData.get("name") as string;
-    const description = formData.get("description") as string; // تأكد إنها description بالـ e وليس الـ i
+    const description = (formData.get("description") as string)?.trim(); // تأكد إنها description بالـ e وليس الـ i
 
     if (!name || name.trim() === "") {
       return { error: "Project name is required" };
@@ -278,7 +278,7 @@ export async function createProject(
       await dispatchWebhook(session.user.id, "project.created", {
         projectId: newProject.id,
         name: newProject.name,
-        description: newProject.description,
+        description: newProject.description ?? undefined,
       });
     }
 
@@ -569,7 +569,8 @@ export async function updateProject(
     });
     await dispatchWebhook(session.user.id, "project.updated", {
       projectId,
-      changes: { name, description },
+      name,
+      description,
     });
     revalidatePath("/dashboard");
     return { success: "Project updated successfully!" };
