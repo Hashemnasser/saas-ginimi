@@ -41,11 +41,17 @@ export const getCachedStats = unstable_cache(
     };
   },
   ["admin-stats"], // مفتاح الكاش
-  { revalidate: 3600, tags: ["admin-stats"] } // تحديث البيانات كل ساعة فقط
+  { revalidate: 3000, tags: ["admin-stats"] } // تحديث البيانات كل ساعة فقط
+);
+
+export const getCachedGrowthData = unstable_cache(
+  async () => getGrowthData(),
+  ["admin-growth-data"],
+  { revalidate: 3600, tags: ["admin-growth-data"] }
 );
 
 // الحصول على بيانات النمو (آخر 12 شهراً)
-export async function getGrowthData() {
+async function getGrowthData() {
   const now = new Date();
   const months = [];
   // إنشاء مصفوفة تحتوي على آخر 12 شهراً (من الأقدم إلى الأحدث)

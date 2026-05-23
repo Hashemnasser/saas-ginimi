@@ -38,15 +38,19 @@ export default function ProcessingContent() {
       dedupingInterval: 0, //لمنع استخدام معلومات من عملية جلب سابقة
     }
   );
-
   // عند نجاح الاشتراك، تحديث الجلسة والتوجيه
   useEffect(() => {
     if (data?.isPro) {
       const finalize = async () => {
-        await update();
+        // await update();
+        await update().catch((err) =>
+          console.error("Session update background error:", err)
+        );
         router.push("/dashboard");
       };
+
       finalize();
+      console.log("⚠️⚠️⚠️⚠️data?.isPro", data?.isPro);
     }
   }, [data, router, update]);
 
@@ -66,7 +70,10 @@ export default function ProcessingContent() {
         <p className="text-sm text-gray-500 mt-2">جاري التحقق...</p>
       )}
       {error && (
-        <p className="text-red-500 text-sm mt-4">
+        <p
+          className="
+        text-red-500 text-sm mt-4"
+        >
           حدث خطأ في التحقق من الاشتراك. يرجى تحديث الصفحة أو مراجعة الدعم.
         </p>
       )}

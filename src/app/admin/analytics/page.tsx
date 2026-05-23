@@ -77,7 +77,7 @@
 import { auth } from "@/auth";
 import AnalyticsCharts from "@/components/admin/AnalyticsCharts";
 import GrowthCharts from "@/components/admin/GrowthCharts";
-import { getCachedStats, getGrowthData } from "@/lib/stats";
+import { getCachedGrowthData, getCachedStats } from "@/lib/stats";
 import { redirect } from "next/navigation";
 
 export default async function AdminAnalyticsPage() {
@@ -91,7 +91,7 @@ export default async function AdminAnalyticsPage() {
   // جلب البيانات المتوازية لسرعة التحميل
   const [stats, growData] = await Promise.all([
     getCachedStats(),
-    getGrowthData(),
+    getCachedGrowthData(),
   ]);
 
   return (

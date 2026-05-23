@@ -155,18 +155,10 @@
 // // export const config = {
 // //   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 // // };
+
+import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-
-// دالة استخراج التوكن
-function getSessionToken(request: NextRequest): string | undefined {
-  return (
-    request.cookies.get("__Secure-authjs.session-token")?.value ||
-    request.cookies.get("__Secure-next-auth.session-token")?.value ||
-    request.cookies.get("authjs.session-token")?.value ||
-    request.cookies.get("next-auth.session-token")?.value
-  );
-}
 
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
@@ -178,9 +170,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = getSessionToken(request);
-  const isLoggedIn = !!token;
+  // 2. الحصول على التوكن وفك تشفيره باستخدام getToken
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
+  const isLoggedIn = !!token;
+  const userRole = token?.role;
   const isAuthPage =
     pathname.startsWith("/login") || pathname.startsWith("/register");
   const isAdminRoute = pathname.startsWith("/admin");
@@ -217,6 +214,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
     return NextResponse.next();
+  }
+  // 6. صفحة الأدمن
+  if (isAdminRoute && userRole !== "ADMIN") {
+    url.pathname = "/dashboard";
+    return Response.redirect(url);
   }
 
   return NextResponse.next();
