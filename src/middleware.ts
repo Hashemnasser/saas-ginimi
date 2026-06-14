@@ -173,6 +173,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  //  // 2. الحصول على التوكن وفك تشفيره باستخدام getToken
+  //  const token = await getToken({
+  //   req: request,
+  //   secret: process.env.NEXTAUTH_SECRET,
+  // });
   // تحديد اسم الكوكيز حسب البيئة
   const isProduction = process.env.NODE_ENV === "production";
   const cookieName = isProduction
