@@ -166,16 +166,25 @@ export async function middleware(request: NextRequest) {
 
   // 1. استثناء الويب-هوك فوراً (أهم خطوة لحل مشكلة 303)
   // هذا يضمن أن طلبات Stripe لن تخضع لأي فحص تسجيل دخول
-  if (pathname.startsWith("/api/webhooks")) {
+  if (
+    pathname.startsWith("/api/webhooks") ||
+    pathname.startsWith("/api/auth")
+  ) {
     return NextResponse.next();
   }
 
+  // تحديد اسم الكوكيز حسب البيئة
+  const isProduction = process.env.NODE_ENV === "production";
+  const cookieName = isProduction
+    ? "__Secure-authjs.session-token" // أو "__Secure-next-auth.session-token" لو كنت تستخدم v4
+    : "authjs.session-token"; // أو "next-auth.session-token" للنسخة القديمة
   // 2. الحصول على التوكن وفك تشفيره باستخدام getToken
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
+    cookieName: cookieName,
   });
-
+  console.log("tooooooooooken", token);
   const isLoggedIn = !!token;
   const userRole = token?.role;
   const isAuthPage =
