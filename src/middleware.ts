@@ -186,7 +186,7 @@ export async function middleware(request: NextRequest) {
   // 2. الحصول على التوكن وفك تشفيره باستخدام getToken
   const token = await getToken({
     req: request,
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: process.env.AUTH_SECRET,
     cookieName: cookieName,
   });
   console.log("tooooooooooken", token);
