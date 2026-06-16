@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  if (!theme) return null; // أو زر مؤقت
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     // ضروري تحط القوسين {}في يوز ايفيكت
@@ -13,6 +12,7 @@ export default function ThemeToggle() {
     setMounted(true);
   }, []); //الغاية ما نخلي المتصفح يعرض الزر يلي متشكل في السيرفر باول عملية رندر بل انو منأخرو للمرة الثانية وبالتالي الرندرة بتصير بالمتصفح بناء على معلومات المتصفح نفسه
 
+  if (!theme) return null; // أو زر مؤقت
   if (!mounted) return null; //   تجنب عدم التطابق مع الخادم  لان الخادم حاطط قيمة اتراضية والوضع للموقع مخزن ب اللوكال ستورج ويتبع لوضع المتصفح الحالي
 
   return (
