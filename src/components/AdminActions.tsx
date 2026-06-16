@@ -41,7 +41,7 @@ export default function AdminActions({ userId, userName }: AdminActionsProps) {
       <button
         onClick={handleToggleRole}
         disabled={isToggling || isDeleting}
-        className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg transition disabled:opacity-50 uppercase"
+        className="text-xs font-semibold text-indigo-600 hover:text-indigo-800  hover:bg-indigo-100 bg-background   border-border px-3 py-1.5 rounded-lg transition disabled:opacity-50 uppercase"
       >
         {isToggling ? "..." : "change role"}
       </button>
@@ -49,7 +49,7 @@ export default function AdminActions({ userId, userName }: AdminActionsProps) {
       <button
         onClick={handleDeleteUser}
         disabled={isDeleting || isToggling}
-        className="text-xs uppercase font-semibold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg transition disabled:opacity-50"
+        className="text-xs uppercase font-semibold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100    px-3 py-1.5 rounded-lg transition disabled:opacity-50"
       >
         {isDeleting ? "..." : "delete"}
       </button>

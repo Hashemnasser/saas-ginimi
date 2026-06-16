@@ -17,7 +17,7 @@ export default function RegisterPage() {
     <div className="flex min-h-[80vh] items-center justify-center">
       <form
         action={handleSubmit}
-        className="p-8 bg-white   dark:bg-gray-900 border rounded-xl shadow-sm w-full max-w-md"
+        className="p-8 bg-background  text-foreground  border-border border rounded-xl shadow-sm w-full max-w-md"
       >
         <h1 className="text-xl font-bold mb-4">Register</h1>
         <input
@@ -40,7 +40,7 @@ export default function RegisterPage() {
           className="w-full p-2 border mb-3 rounded"
           required
         />
-        <button className="w-full bg-blue-600 text-white py-2 rounded font-bold">
+        <button className="w-full bg-blue-600   text-foreground   py-2 rounded font-bold">
           Sign Up
         </button>
       </form>

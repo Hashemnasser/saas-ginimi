@@ -10,7 +10,7 @@ export default async function HomePage() {
       <h1 className="text-5xl font-extrabold tracking-tight mb-4">
         Build your SaaS faster
       </h1>
-      <p className="text-lg text-gray-600 mb-8 max-w-2xl  dark:text-gray-100">
+      <p className="text-lg  mb-8 max-w-2xl  bg-background  text-foreground  border-border">
         The ultimate foundation for your next big idea. Secure, scalable, and
         ready for production.
       </p>
@@ -29,7 +29,7 @@ export default async function HomePage() {
           </Link>
           <Link
             href="/login"
-            className="bg-white    dark:bg-gray-900 border border-gray-300  dark:border-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition"
+            className=" border  bg-background  text-foreground  border-border px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition"
           >
             View Demo
           </Link>

@@ -20,7 +20,7 @@ interface GrowthDataPoint {
 
 export default function GrowthCharts({ data }: { data: GrowthDataPoint[] }) {
   return (
-    <div className="bg-white  dark:bg-gray-900 p-4 rounded-lg shadow border">
+    <div className="bg-background p-4 rounded-lg shadow border">
       <h2 className="text-lg font-semibold mb-4">Growth Over Last 12 Months</h2>
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={data}>

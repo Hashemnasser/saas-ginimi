@@ -78,18 +78,16 @@ export default function PricingCard({
   };
 
   return (
-    <div className="border rounded-2xl p-6 shadow-sm">
+    <div className="border rounded-2xl p-6 shadow-sm   bg-background  text-foreground  border-border">
       <h2 className="text-2xl font-bold">{plan.name}</h2>
-      <p className="text-gray-600 dark:text-gray-100 mt-2">
-        {plan.description}
-      </p>
+      <p className=" mt-2">{plan.description}</p>
       <p className="text-3xl font-bold mt-4">
         {plan.price === 0 ? "Free" : `$${plan.price / 100}`}
         {plan.price > 0 && (
           <span className="text-sm font-normal">/{plan.interval}</span>
         )}
       </p>
-      <p className="text-gray-600 dark:text-gray-100 mt-2">
+      <p className=" mt-2">
         Projects:{" "}
         {plan.projectLimit === "unlimited" ? "Unlimited" : plan.projectLimit}
       </p>

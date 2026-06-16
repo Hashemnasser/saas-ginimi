@@ -35,49 +35,45 @@ export default function AnalyticsCharts({ stats }: { stats: Stats }) {
   const COLORS = ["#3b82f6", "#10b981", "#f59e0b"];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8    bg-background  text-foreground   ">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white   dark:bg-gray-900 p-4 rounded-lg shadow border">
-          <p className="text-sm text-gray-500  dark:text-gray-100  ">
-            Total Users
-          </p>
+        <div className=" p-4 rounded-lg shadow border">
+          <p className="text-sm   ">Total Users</p>
           <p className="text-2xl font-bold">{stats.userCount}</p>
         </div>
-        <div className="bg-white  dark:bg-gray-900 p-4 rounded-lg shadow border">
-          <p className="text-sm text-gray-500 dark:text-gray-100">
-            Total Projects
-          </p>
+        <div className=" p-4 rounded-lg shadow border   border-border">
+          <p className="text-sm ">Total Projects</p>
           <p className="text-2xl font-bold">{stats.projectCount}</p>
         </div>
-        <div className="bg-white  dark:bg-gray-900 p-4 rounded-lg shadow border">
-          <p className="text-sm text-gray-500 dark:text-gray-100">
-            Active Subscriptions
-          </p>
+        <div className=" p-4 rounded-lg shadow border">
+          <p className="text-sm ">Active Subscriptions</p>
           <p className="text-2xl font-bold">{stats.activeSubscriptions}</p>
         </div>
-        <div className="bg-white  dark:bg-gray-900 p-4 rounded-lg shadow border">
-          <p className="text-sm text-gray-500 dark:text-gray-100">
-            Monthly Recurring Revenue (MRR)
-          </p>
+        <div className=" p-4 rounded-lg shadow border">
+          <p className="text-sm ">Monthly Recurring Revenue (MRR)</p>
           <p className="text-2xl font-bold">${stats.mrr.toFixed(2)}</p>
         </div>
       </div>
 
-      <div className="bg-white  dark:bg-gray-900 p-4 rounded-lg shadow border">
-        <h2 className="text-lg font-semibold mb-4">Overview</h2>
+      <div className=" p-4 rounded-lg shadow border   ">
+        <h2 className="text-lg font-semibold mb-4 ">Overview</h2>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={overviewData}>
+          <BarChart data={overviewData} style={{ color: "green" }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              itemStyle={{
+                color: "green",
+              }}
+            />
             <Legend />
-            <Bar dataKey="value" fill="#3b82f6" />
+            <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="bg-white  dark:bg-gray-900 p-4 rounded-lg shadow border">
+      <div className=" p-4 rounded-lg shadow border">
         <h2 className="text-lg font-semibold mb-4">MRR (Monthly)</h2>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>

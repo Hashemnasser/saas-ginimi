@@ -45,11 +45,13 @@ export default async function DashboardPage() {
   const maxProjects = isActive ? (plan === "PRO" ? 100 : Infinity) : 5;
 
   return (
-    <div className="max-w-6xl mx-auto p-12   dark:bg-gray-900">
-      <header className="flex justify-between items-center mb-10 border-b pb-6   dark:bg-gray-900">
+    <div className="max-w-6xl mx-auto p-12  bg-background  text-foreground  border-border">
+      <header className="flex justify-between items-center mb-10 border-b pb-6   bg-background  text-foreground  border-border">
         <div>
-          <h1 className="text-2xl font-bold   dark:bg-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500  dark:text-gray-100">
+          <h1 className="text-2xl font-bold   bg-background  text-foreground  border-border">
+            Dashboard
+          </h1>
+          <p className="text-sm bg-background  text-foreground  border-border">
             Welcome, {session.user.email}
           </p>
         </div>
@@ -59,8 +61,8 @@ export default async function DashboardPage() {
 
       {/* حالة الاشتراك */}
       <div className="grid gap-6 mb-10">
-        <div className="p-8 border rounded-2xl bg-slate-50  dark:bg-gray-800">
-          <h2 className="font-semibold text-lg mb-2   dark:bg-gray-900">
+        <div className="p-8 border rounded-2xl bg-background  text-foreground  border-border">
+          <h2 className="font-semibold text-lg mb-2   bg-background  text-foreground  border-border">
             Subscription Status
           </h2>
           <div className="flex items-center gap-3">
@@ -80,7 +82,7 @@ export default async function DashboardPage() {
 
       {/* نموذج إنشاء مشروع جديد */}
 
-      <div className="mb-8 p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm">
+      <div className="mb-8 p-6 bg-background  text-foreground  border-border rounded-2xl shadow-sm">
         <h2 className="text-lg font-semibold mb-4">Create New Project</h2>
         <CreateProjectForm
           currentcount={currentProjectsCount}

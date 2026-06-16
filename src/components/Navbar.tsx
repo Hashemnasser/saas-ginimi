@@ -7,7 +7,7 @@ export default async function Navbar() {
   const session = await auth();
 
   return (
-    <nav className="flex items-center justify-between px-12 py-4 border-b border-gray-200  dark:border-gray-700 bg-white dark:bg-gray-800">
+    <nav className="flex items-center justify-between px-12 py-6 border-b bg-background  text-foreground  border-border shadow shadow-amber-50">
       <Link href="/" className="text-2xl font-bold text-blue-600">
         MySaaS
       </Link>
@@ -16,31 +16,31 @@ export default async function Navbar() {
         {session ? (
           <div className="flex items-center justify-between  gap-6">
             <ThemeToggle /> {/* <--- هنا */}
-            <span className="text-sm text-gray-600 dark:text-gray-100">
-              Hi, {session.user?.name}
+            <span className="text-sm bg-background  text-foreground  ">
+              Hi : {session.user?.name}
             </span>
             <Link
               href="/settings"
-              className="text-sm font-medium text-gray-600 dark:text-gray-100 hover:text-black"
+              className="text-sm font-medium   text-foreground   hover:text-black "
             >
               Settings
             </Link>
             <Link
               href="/dashboard"
-              className="text-sm font-medium text-gray-600 dark:text-gray-100 hover:text-black"
+              className="text-sm font-medium  text-foreground   hover:text-black"
             >
               Dashboard
             </Link>
             <Link
               href="/settings/webhooks"
-              className="text-sm font-medium text-gray-600 dark:text-gray-100 hover:text-black"
+              className="text-sm font-medium   text-foreground  hover:text-black"
             >
               Webhooks
             </Link>
             {session?.user?.role === "ADMIN" && (
               <Link
                 href="/admin"
-                className="text-sm font-medium text-gray-600 dark:text-gray-100 hover:text-black"
+                className="text-sm font-medium   text-foreground  hover:text-black"
               >
                 Admin
               </Link>
@@ -53,21 +53,21 @@ export default async function Navbar() {
                 revalidatePath("/dashboard");
               }}
             >
-              <button className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors">
+              <button className="px-4 py-2 text-sm font-medium text-white bg-red-300 rounded-lg hover:bg-red-600 transition-colors">
                 Logout
               </button>
             </form>
             {session?.user?.role === "ADMIN" && (
               <Link
                 href="/admin/analytics"
-                className="text-sm font-medium text-gray-600 dark:text-gray-100 hover:text-black"
+                className="text-sm font-medium   text-foreground   hover:text-black"
               >
                 Analytics
               </Link>
             )}
             <Link
               href="/archive"
-              className="text-sm font-medium text-gray-600 dark:text-gray-100 hover:text-black"
+              className="text-sm font-medium bg-background  text-foreground  border-border hover:text-black"
             >
               Archive
             </Link>
@@ -77,13 +77,13 @@ export default async function Navbar() {
             <ThemeToggle /> {/* <--- هنا */}
             <Link
               href="/login"
-              className="text-sm font-medium text-gray-600 dark:text-gray-100 hover:text-blue-600"
+              className="text-sm font-medium bg-background  text-foreground  border-border hover:text-blue-600"
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+              className="px-4 py-2 text-sm font-medium   text-foreground  bg-blue-600 rounded-lg hover:bg-blue-700"
             >
               Get Started
             </Link>

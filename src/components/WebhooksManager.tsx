@@ -124,9 +124,9 @@ export default function WebhooksManager({
       <div className="card">
         <h2 className="text-lg font-semibold mb-4">Your Webhooks</h2>
         {subscriptions.length === 0 ? (
-          <p className="text-gray-500">No webhooks configured.</p>
+          <p className=" text-foreground  ">No webhooks configured.</p>
         ) : (
-          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+          <ul className="divide-y divide-background">
             {subscriptions.map((sub) => (
               <li
                 key={sub.id}

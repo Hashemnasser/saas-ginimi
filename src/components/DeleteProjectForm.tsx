@@ -35,7 +35,7 @@ export default function DeleteProjectButton({ id }: { id: string }) {
       <button
         type="submit"
         disabled={isPending}
-        className="text-gray-400  dark:text-gray-100 hover:text-red-500 transition-colors p-2 disabled:opacity-50"
+        className="  text-foreground  border-border hover:text-red-500 transition-colors p-2 disabled:opacity-50"
         onClick={(e) => {
           if (!confirm("Are you sure?")) e.preventDefault();
         }}

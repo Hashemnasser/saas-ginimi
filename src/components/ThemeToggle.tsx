@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-
+  if (!theme) return null; // أو زر مؤقت
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     // ضروري تحط القوسين {}في يوز ايفيكت

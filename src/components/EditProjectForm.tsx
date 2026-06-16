@@ -34,7 +34,7 @@ export default function EditProjectForm({
     return (
       <button
         onClick={() => setIsEditing(true)}
-        className="text-gray-500  dark:text-gray-100 hover:text-blue-600 transition-colors p-1"
+        className="text-foreground   hover:text-blue-600 transition-colors p-1"
         title="Edit project"
       >
         ✏️
@@ -46,13 +46,11 @@ export default function EditProjectForm({
     <form
       // ref={formRef}
       action={formAction}
-      className="mt-2 p-3 border rounded-lg bg-gray-50  dark:bg-gray-800 space-y-2"
+      className="mt-2 p-3 border rounded-lg bg-background text-foreground  border-border space-y-2"
     >
       <input type="hidden" name="projectId" value={projectId} />
       <div>
-        <label className="block text-sm font-medium text-gray-700  dark:text-gray-100">
-          Name
-        </label>
+        <label className="block text-sm font-medium ">Name</label>
         <input
           type="text"
           name="name"
@@ -62,9 +60,7 @@ export default function EditProjectForm({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700  dark:text-gray-100">
-          Description
-        </label>
+        <label className="block text-sm font-medium ">Description</label>
         <textarea
           name="description"
           defaultValue={initialDescription || ""}

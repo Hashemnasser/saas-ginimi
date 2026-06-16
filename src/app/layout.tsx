@@ -29,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased bg-gray-50 dark:bg-gray-800 dark:text-gray-100 text-gray-900">
+      <body className="antialiased bg-background  text-foreground  border-border">
         <ThemeProvider>
           <SessionProvider>
             <ToasterProvider />

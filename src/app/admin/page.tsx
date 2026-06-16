@@ -22,30 +22,30 @@ export default async function AdminPage() {
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800  dark:text-gray-100">
+      <h1 className="text-3xl font-boldbg-background  text-foreground  border-border">
         Admin Control Panel
       </h1>
 
       {/* بطاقات الإحصائيات (نفس الكود السابق) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 bg-white  dark:bg-gray-900 border border-blue-100 rounded-2xl shadow-sm">
+        <div className="p-6  border border-blue-100 rounded-2xl shadow-sm bg-background  text-foreground  ">
           <p className="text-blue-600 font-medium mb-1">Total Users</p>
-          <h2 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
+          <h2 className="text-4xl font-bold bg-background  text-foreground  border-border">
             {userCount}
           </h2>
         </div>
-        <div className="p-6 bg-white   dark:bg-gray-900 border border-purple-100 rounded-2xl shadow-sm">
+        <div className="p-6 bg-background  text-foreground  border border-purple-100 rounded-2xl shadow-sm">
           <p className="text-purple-600 font-medium mb-1">Total Projects</p>
-          <h2 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
+          <h2 className="text-4xl font-bold bg-background  text-foreground  border-borde">
             {projectCount}
           </h2>
         </div>
       </div>
 
       {/* الجدول */}
-      <div className="bg-white   dark:bg-gray-900 border    border-gray-200  dark:border-gray-700 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-background  text-foreground  border-border rounded-2xl overflow-hidden shadow-sm">
         <table className="w-full text-left">
-          <thead className="text-xs text-gray-500  dark:text-gray-100 uppercase bg-gray-50  dark:bg-gray-800 border-b">
+          <thead className="text-xs bg-background  text-foreground  border-border uppercase  border-b">
             <tr>
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">Email</th>
@@ -57,12 +57,12 @@ export default async function AdminPage() {
             {recentUsers.map((u) => (
               <tr
                 key={u.id}
-                className="hover:bg-gray-50  dark:bg-gray-800 transition-colors"
+                className="hover:bg-gray-50  bg-background  text-foreground  border-border transition-colors"
               >
-                <td className="px-6 py-4 font-medium text-gray-900  dark:text-gray-100">
+                <td className="px-6 py-4 font-medium bg-background  text-foreground  border-border">
                   {u.name}
                 </td>
-                <td className="px-6 py-4 text-gray-600  dark:text-gray-100">
+                <td className="px-6 py-4 bg-background  text-foreground  border-border">
                   {u.email}
                 </td>
                 <td className="px-6 py-4">

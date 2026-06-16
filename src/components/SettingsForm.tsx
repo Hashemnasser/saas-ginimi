@@ -23,7 +23,7 @@ export default function SettingsForm({ initialName }: { initialName: string }) {
   return (
     <form action={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
+        <label className="block text-sm font-medium text-foreground  ">
           Display Name
         </label>
         <input
@@ -35,7 +35,7 @@ export default function SettingsForm({ initialName }: { initialName: string }) {
       </div>
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        className="bg-blue-600 text-foreground   px-4 py-2 rounded-lg hover:bg-blue-700"
       >
         Save Changes
       </button>

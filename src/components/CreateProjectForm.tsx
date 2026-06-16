@@ -29,7 +29,7 @@ export default function CreateProjectForm({
       <div>
         <label
           htmlFor="name"
-          className="block text-sm font-medium text-gray-700  dark:text-gray-100 mb-1"
+          className="block text-sm font-medium bg-background  text-foreground  border-border mb-1"
         >
           Project Name
         </label>
@@ -45,7 +45,7 @@ export default function CreateProjectForm({
       <div>
         <label
           htmlFor="description"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1"
+          className="block text-sm font-medium bg-background  text-foreground  border-border mb-1"
         >
           Description (optional)
         </label>
@@ -62,7 +62,7 @@ export default function CreateProjectForm({
         <button
           type="submit"
           disabled={isPending || currentcount > maxLimit}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm disabled:bg-gray-400 hover:bg-blue-700 transition-all"
+          className="bg-blue-600    text-foreground  border-border   px-4 py-2 rounded-lg text-sm disabled:bg-gray-400 hover:bg-blue-700 transition-all"
         >
           {isPending ? "Creating..." : "Create Project"}
         </button>
