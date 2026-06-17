@@ -54,7 +54,7 @@ export default function ArchiveProjectButton({ id }: { id: string }) {
     <button
       onClick={handleArchive}
       disabled={isPending}
-      className="  text-foreground   hover:text-yellow-600 transition-colors p-2 disabled:opacity-50"
+      className="  text-foreground  shadow shadow-blue-950/55 hover:text-yellow-600 transition-colors p-2 disabled:opacity-50"
       title="Archive project"
     >
       {isPending ? <span className="animate-pulse">...</span> : "📦"}

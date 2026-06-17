@@ -3,6 +3,7 @@
 import { generateApiKey } from "@/lib/actions";
 import { useState } from "react";
 import { toast } from "sonner";
+import CopyButton from "./CopyButton";
 
 interface ApiKeySectionProps {
   initialKey?: string | null; // المفتاح الموجود حالياً (إن وجد)
@@ -35,34 +36,38 @@ export default function ApiKeySection({
       <h2 className="text-xl font-semibold mb-4">API Access</h2>
       {apiKey ? (
         <div>
-          <p className="text-sm bg-background  text-foreground  border-border">
-            Your secret API key. <strong>Keep it safe!</strong> It will not be
-            shown again.
+          <p className="text-sm bg-background    border-border  text-rose-400">
+            Your secret API key.{" "}
+            <strong className="font-extrabold animate-pulse ">
+              Keep it safe!
+            </strong>{" "}
+            It will not be shown again.
           </p>
-          <div className="bg-background  text-foreground  border-border p-3 rounded my-3 font-mono text-sm break-all">
-            {apiKey}
+          <div className="bg-background flex gap-4 text-foreground border shadow-xl  border-border p-2 rounded-lg my-3 font-mono  break-all">
+            <span className="flex-1 min-w-0 truncate">{apiKey}</span>
+            <CopyButton text={apiKey} />{" "}
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-foreground">
             Status: {isEnabled ? "✅ Enabled" : "❌ Disabled"}
           </p>
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="btn-secondary mt-3"
+            className="bg-blue-600 text-white shadow shadow-blue-950/55   hover:animate-pulse px-4 py-2 rounded-lg hover:bg-blue-700"
           >
             {loading ? "Generating..." : "Regenerate Key"}
           </button>
         </div>
       ) : (
         <div>
-          <p className="text-sm bg-background  text-foreground  border-border mb-3">
+          <p className="text-sm bg-background  text-green-400  border-border mb-3">
             You don&apos;t have an API key yet. Generate one to use the REST
             API.
           </p>
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="btn-primary"
+            className="bg-blue-600 text-white  shadow shadow-blue-950/55   hover:animate-pulse px-4 py-2 rounded-lg hover:bg-blue-700"
           >
             {loading ? "Generating..." : "Generate API Key"}
           </button>

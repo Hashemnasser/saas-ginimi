@@ -34,7 +34,7 @@ export default function EditProjectForm({
     return (
       <button
         onClick={() => setIsEditing(true)}
-        className="text-foreground   hover:text-blue-600 transition-colors p-1"
+        className="text-white  shadow shadow-blue-950/55   hover:text-blue-600 transition-colors p-1"
         title="Edit project"
       >
         ✏️
@@ -72,7 +72,7 @@ export default function EditProjectForm({
         <button
           type="button"
           onClick={() => setIsEditing(false)}
-          className="px-3 py-1 text-sm bg-gray-300 rounded-md hover:bg-gray-400"
+          className="px-3 py-1 text-sm bg-gray-300 rounded-md   shadow shadow-blue-950/55 hover:bg-gray-400"
           disabled={isPending}
         >
           Cancel
@@ -80,7 +80,7 @@ export default function EditProjectForm({
         <button
           type="submit"
           disabled={isPending}
-          className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md   shadow shadow-blue-950/55 hover:bg-blue-700 disabled:opacity-50"
         >
           {isPending ? "Saving..." : "Save"}
         </button>

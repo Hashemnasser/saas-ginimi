@@ -76,27 +76,30 @@ export default function WebhooksManager({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8   border border-border   p-10  rounded-2xl   shadow-zinc-500  shadow-lg">
       <div className="card">
         <h2 className="text-lg font-semibold mb-4">Add New Webhook</h2>
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium">Endpoint URL</label>
+            <label className="block text-sm font-medium">
+              Enter Endpoint URL
+            </label>
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://your-server.com/webhook"
-              className="input mt-1"
+              className="w-full px-4 py-2 mt-1 border rounded-lg outline-none focus:ring-2 shadow-lg focus:ring-blue-500"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Events</label>
-            <div className="flex flex-wrap gap-3 mt-1">
+            <label className="block text-sm font-medium">Events : </label>
+            <div className="flex justify-between w-full px-4 py-3 mt-1 border rounded-lg outline-none  shadow-lg ">
               {availableEvents.map((event) => (
                 <label key={event} className="flex items-center gap-1">
                   <input
+                    className=" hover:animate-pulse"
                     type="checkbox"
                     value={event}
                     checked={selectedEvents.includes(event)}
@@ -115,13 +118,17 @@ export default function WebhooksManager({
               ))}
             </div>
           </div>
-          <button type="submit" disabled={loading} className="btn-primary">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white    hover:animate-pulse px-4 py-2    shadow shadow-blue-950/55 rounded-lg hover:bg-blue-700"
+          >
             {loading ? "Adding..." : "Add Webhook"}
           </button>
         </form>
       </div>
 
-      <div className="card">
+      <div className=" justify-between w-full px-4 py-3 mt-1 border rounded-lg outline-none  shadow-lg ">
         <h2 className="text-lg font-semibold mb-4">Your Webhooks</h2>
         {subscriptions.length === 0 ? (
           <p className=" text-foreground  ">No webhooks configured.</p>
@@ -141,12 +148,12 @@ export default function WebhooksManager({
                     Status: {sub.active ? "Active" : "Inactive"}
                   </p>
                 </div>
-                <button
+                <div
                   onClick={() => handleDelete(sub.id)}
-                  className="text-red-500 hover:text-red-700 text-sm ml-4"
+                  className="text-red-500 hover:text-red-700 text-sm ml-4 shadow   shadow-red-700/50   border border-red-200 p-2 rounded-xl hover:animate-pulse"
                 >
                   Delete
-                </button>
+                </div>
               </li>
             ))}
           </ul>

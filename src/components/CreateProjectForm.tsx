@@ -62,7 +62,7 @@ export default function CreateProjectForm({
         <button
           type="submit"
           disabled={isPending || currentcount > maxLimit}
-          className="bg-blue-600    text-foreground  border-border   px-4 py-2 rounded-lg text-sm disabled:bg-gray-400 hover:bg-blue-700 transition-all"
+          className="bg-blue-600    text-white  border-border  hover:animate-pulse  shadow shadow-blue-950/55 px-4 py-2 rounded-lg text-sm disabled:bg-gray-400 hover:bg-blue-700 transition-all"
         >
           {isPending ? "Creating..." : "Create Project"}
         </button>

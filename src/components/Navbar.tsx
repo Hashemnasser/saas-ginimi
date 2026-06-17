@@ -7,8 +7,11 @@ export default async function Navbar() {
   const session = await auth();
 
   return (
-    <nav className="flex items-center justify-between px-12 py-6 border-b bg-background  text-foreground  border-border shadow shadow-amber-50">
-      <Link href="/" className="text-2xl font-bold text-blue-600">
+    <nav className="flex items-center    justify-between px-12 py-6 border-b bg-background  text-foreground  border-border shadow shadow-amber-50">
+      <Link
+        href="/"
+        className="text-2xl font-bold text-blue-600   hover:animate-pulse"
+      >
         MySaaS
       </Link>
 
@@ -21,30 +24,44 @@ export default async function Navbar() {
             </span>
             <Link
               href="/settings"
-              className="text-sm font-medium   text-foreground   hover:text-black "
+              className="text-sm font-medium   text-foreground   hover:text-blue-600 "
             >
               Settings
             </Link>
             <Link
               href="/dashboard"
-              className="text-sm font-medium  text-foreground   hover:text-black"
+              className="text-sm font-medium  text-foreground   hover:text-blue-600"
             >
               Dashboard
             </Link>
             <Link
               href="/settings/webhooks"
-              className="text-sm font-medium   text-foreground  hover:text-black"
+              className="text-sm font-medium   text-foreground  hover:text-blue-600"
             >
               Webhooks
             </Link>
             {session?.user?.role === "ADMIN" && (
               <Link
                 href="/admin"
-                className="text-sm font-medium   text-foreground  hover:text-black"
+                className="text-sm font-medium   text-foreground  hover:text-blue-600"
               >
                 Admin
               </Link>
             )}
+            {session?.user?.role === "ADMIN" && (
+              <Link
+                href="/admin/analytics"
+                className="text-sm font-medium   text-foreground   hover:text-blue-600  "
+              >
+                Analytics
+              </Link>
+            )}
+            <Link
+              href="/archive"
+              className="text-sm font-medium bg-background  text-foreground  border-border hover:text-blue-600"
+            >
+              Archive
+            </Link>
             <form
               action={async () => {
                 "use server";
@@ -53,31 +70,17 @@ export default async function Navbar() {
                 revalidatePath("/dashboard");
               }}
             >
-              <button className="px-4 py-2 text-sm font-medium text-white bg-red-300 rounded-lg hover:bg-red-600 transition-colors">
+              <button className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg shadow shadow-blue-950/55 hover:bg-red-300       transition-all   hover:animate-pulse   duration-75 ">
                 Logout
               </button>
             </form>
-            {session?.user?.role === "ADMIN" && (
-              <Link
-                href="/admin/analytics"
-                className="text-sm font-medium   text-foreground   hover:text-black"
-              >
-                Analytics
-              </Link>
-            )}
-            <Link
-              href="/archive"
-              className="text-sm font-medium bg-background  text-foreground  border-border hover:text-black"
-            >
-              Archive
-            </Link>
           </div>
         ) : (
           <div className="flex items-center gap-6">
             <ThemeToggle /> {/* <--- هنا */}
             <Link
               href="/login"
-              className="text-sm font-medium bg-background  text-foreground  border-border hover:text-blue-600"
+              className="text-sm font-medium bg-background  text-foreground  border-border hover:hover:text-blue-600"
             >
               Login
             </Link>

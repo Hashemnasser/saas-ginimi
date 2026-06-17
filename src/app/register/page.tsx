@@ -40,7 +40,7 @@ export default function RegisterPage() {
           className="w-full p-2 border mb-3 rounded"
           required
         />
-        <button className="w-full bg-blue-600   text-foreground   py-2 rounded font-bold">
+        <button className="w-full bg-blue-600   text-white shadow shadow-blue-950/55    py-2 rounded font-bold">
           Sign Up
         </button>
       </form>

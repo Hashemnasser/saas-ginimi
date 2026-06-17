@@ -10,7 +10,7 @@ export default function UpgradeButton() {
     <button disabled={isLoading} onClick={() => setIsLoading(true)}>
       <Link
         href={"/pricing"}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg
+        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2  shadow shadow-blue-950/55 rounded-lg hover:animate-pulse
       transition-all disabled:opacity-50"
       >
         {isLoading ? " loading..." : "upgrade to Pro"}

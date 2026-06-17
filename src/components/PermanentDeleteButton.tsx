@@ -39,7 +39,7 @@ export default function PermanentDeleteButton({ id }: { id: string }) {
       title="Permanent Delete"
       onClick={handleDelete}
       disabled={isPending} // لا تنسى تعطيل الزر أثناء المسح لمنع الضغط المتكرر
-      className="text-red-600 hover:text-red-800 transition-colors p-2 disabled:opacity-50"
+      className="text-red-600  shadow shadow-blue-950/55 hover:text-red-800 transition-colors p-2 disabled:opacity-50"
     >
       {isPending ? <span className="animate-pulse">...</span> : "🗑️"}
     </button>

@@ -61,7 +61,7 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full py-2.5       text-foreground      bg-blue-600 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            className="w-full py-2.5       text-white    shadow shadow-blue-950/55   bg-blue-600 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
             Sign In
           </button>
@@ -82,13 +82,13 @@ export default function LoginPage() {
         <div className="grid grid-cols-2 gap-4">
           <button
             onClick={() => loginWithGoogle()}
-            className="flex items-center justify-center gap-2 border py-2 rounded hover:bg-background   transition"
+            className="flex items-center justify-center gap-2 border py-2 shadow shadow-blue-950/55 rounded hover:bg-background   transition"
           >
             Google
           </button>
           <button
             onClick={() => loginWithGithub()}
-            className="flex items-center justify-center gap-2 border py-2 rounded hover:bg-background  transition"
+            className="flex items-center justify-center gap-2 border shadow shadow-blue-950/55 py-2 rounded hover:bg-background  transition"
           >
             GitHub
           </button>

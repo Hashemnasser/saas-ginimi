@@ -39,7 +39,7 @@ export default function RestoreProjectButton({ id }: { id: string }) {
       title="Restore project"
       onClick={handleRestore}
       disabled={isPending} // لا تنسى تعطيل الزر أثناء المسح لمنع الضغط المتكرر
-      className="text-green-600 hover:text-green-800 hover:scale-110 active:scale-95 transition-all p-2 disabled:opacity-50"
+      className="text-green-600 hover:text-green-800  shadow shadow-blue-950/55 hover:scale-110 active:scale-95 transition-all p-2 disabled:opacity-50"
     >
       {isPending ? <span className="animate-pulse">...</span> : "↩️"}
     </button>

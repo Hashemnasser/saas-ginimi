@@ -64,7 +64,7 @@ export default function ShareProjectModal({
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="text-gray-500 dark:text-gray-100 hover:text-green-600 transition-colors p-1"
+        className="text-white  shadow shadow-blue-950/55 hover:text-green-600 transition-colors p-1"
         title="Share project"
       >
         🔗
@@ -104,7 +104,7 @@ export default function ShareProjectModal({
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 text-sm bg-background rounded-md"
+                  className="px-4 py-2 text-sm   shadow shadow-blue-950/55 bg-background rounded-md"
                   disabled={loading}
                 >
                   Cancel
@@ -112,7 +112,7 @@ export default function ShareProjectModal({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md disabled:opacity-50"
+                  className="px-4 py-2 text-sm bg-blue-600 text-white   shadow shadow-blue-950/55 rounded-md disabled:opacity-50"
                 >
                   {loading ? "Sending..." : "Send Invitation"}
                 </button>

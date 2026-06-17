@@ -35,7 +35,7 @@ export default function SettingsForm({ initialName }: { initialName: string }) {
       </div>
       <button
         type="submit"
-        className="bg-blue-600 text-foreground   px-4 py-2 rounded-lg hover:bg-blue-700"
+        className="bg-blue-600 text-white shadow shadow-blue-950/55    hover:animate-pulse px-4 py-2 rounded-lg hover:bg-blue-700"
       >
         Save Changes
       </button>

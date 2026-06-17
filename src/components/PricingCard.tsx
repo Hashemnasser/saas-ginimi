@@ -94,7 +94,7 @@ export default function PricingCard({
       <button
         onClick={handleChoosePlan}
         disabled={loading}
-        className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg disabled:opacity-50"
+        className="mt-4 w-full bg-blue-600 text-white  shadow shadow-blue-950/55 py-2 rounded-lg disabled:opacity-50"
       >
         {loading ? "Loading..." : "Choose Plan"}
       </button>
