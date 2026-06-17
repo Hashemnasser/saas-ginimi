@@ -101,7 +101,7 @@ export default async function AdminAnalyticsPage() {
           Admin Analytics Dashboard
         </h1>
         <p className="text-sm text-muted-foreground">
-          Last Update: {new Date().toLocaleTimeString("ar-SY")}
+          Last Update: {new Date().toLocaleTimeString()}
         </p>
       </div>
 
