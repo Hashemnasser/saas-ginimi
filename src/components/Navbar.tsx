@@ -7,12 +7,13 @@ export default async function Navbar() {
   const session = await auth();
 
   return (
-    <nav className="flex items-center    justify-between px-12 py-6 border-b bg-background  text-foreground  border-border shadow shadow-amber-50">
-      <Link
-        href="/"
-        className="text-2xl font-bold text-blue-600   hover:animate-pulse"
-      >
-        MySaaS
+    <nav className="flex items-center    justify-between px-12 py-6 border-b bg-background  text-foreground  border-border shadow-lg shadow-yellow-50">
+      <Link href="/">
+        <h1 className="text-4xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-3 leading-[1.1]">
+          <span className="bg-linear-to-r from-amber-900 via-yellow-300 to-amber-300 bg-clip-text text-transparent">
+            MySaaS
+          </span>
+        </h1>
       </Link>
 
       <div className="flex items-center gap-6">
@@ -80,13 +81,13 @@ export default async function Navbar() {
             <ThemeToggle /> {/* <--- هنا */}
             <Link
               href="/login"
-              className="text-sm font-medium bg-background  text-foreground  border-border hover:hover:text-blue-600"
+              className="px-4 py-2 text-sm     bg-linear-to-br from-amber-200 via-lime-100 to-yellow-500 text-black/80 font-bold rounded-full  hover:scale-105 duration-500 "
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="px-4 py-2 text-sm font-medium   text-foreground  bg-blue-600 rounded-lg hover:bg-blue-700"
+              className="px-4 py-2 text-sm     bg-linear-to-br from-amber-300 via-lime-100 to-yellow-600 text-black font-bold rounded-full  hover:scale-105 duration-500 "
             >
               Get Started
             </Link>

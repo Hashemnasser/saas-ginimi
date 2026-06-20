@@ -34,7 +34,7 @@ export default function RootLayout({
           <SessionProvider>
             <ToasterProvider />
             <Navbar />
-            <main className="max-w-7xl mx-auto p-6">{children}</main>
+            <main className="max-w-full mx-auto ">{children}</main>
           </SessionProvider>
         </ThemeProvider>
         <Analytics /> {/* أضف هذا السطر قبل إغلاق body */}
